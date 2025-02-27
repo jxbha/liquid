@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+# Project Bootstrapper
+(
+    export ROOTDIR=$(pwd)
+    source $ROOTDIR/.env
+    export PATH=$PATH:$ROOTDIR/bin
+    export DEVSPACE=true
+    zsh
+)
+

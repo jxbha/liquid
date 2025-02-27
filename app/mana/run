@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e
+
+env() {
+    clean
+    tmux new -ds run
+	tmux send-keys -t run 'go run ./cmd/' Enter
+	echo -e "\n\n"
+	sleep 1 #sleeping because C is faster than Go.
+}
+
+crl() {
+    curl http://localhost:4040
+    echo -e "----\n"
+    curl http://localhost:4040/1
+}
+
+clean() {
+    if [[ $(tmux ls | grep "run") ]]; then
+        tmux kill-session -t run
+    fi
+}
+
+trap clean EXIT
+
+test() {
+    env
+    crl
+    clean
+}
+
+case "$1" in 
+    "test")
+        test
+        ;;
+    "env")
+        env
+        ;;
+    "clean")
+        clean
+        ;;
+    *)
+        test
+        ;;
+esac
