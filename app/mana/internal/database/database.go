@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
@@ -20,7 +21,13 @@ type Connection struct {
 }
 
 func NewDB() (*Connection, error) {
-	conn, err := sql.Open("pgx", "postgres://postgres:4454@localhost:5432/test?sslmode=disable")
+	POSTGRES_UN := os.Getenv("POSTGRES_UN")
+	POSTGRES_PW := os.Getenv("POSTGRES_PW")
+	POSTGRES_URI := os.Getenv("POSTGRES_URI")
+	URI := fmt.Sprintf("postgres://%v:%v@%v", POSTGRES_UN, POSTGRES_PW, POSTGRES_URI)
+
+	conn, err := sql.Open("pgx", URI)
+
 	if err != nil {
 		return nil, err
 	}
