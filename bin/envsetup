@@ -1,0 +1,25 @@
+#!/bin/zsh
+
+export ROOT=$(pwd)
+
+link_env() {
+    if [[ -L $ROOT/app/mana/.env ]]; then
+        rm $ROOT/app/mana/.env 
+    fi
+    ln -s $ROOT/.env $ROOT/app/mana/.env
+}
+
+# project-specific stuff
+extras() {
+    :
+    link_env
+}
+
+# base project env
+(
+    while read i; do export $i; done <$ROOT/.env
+    export PATH=$PATH:$ROOT/bin
+    export DEVSPACE=true
+    extras
+    zsh
+)
