@@ -1,1 +1,4 @@
 .env
+*.pkrvars.hcl
+*.tfvars
+TODO

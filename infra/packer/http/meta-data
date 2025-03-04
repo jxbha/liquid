@@ -1,0 +1,9 @@
+{
+    "v1": {
+        "cloud_name": "nocloud",
+        "variant": "ubuntu",
+        "distro_release": "noble",
+        "distro_version": "24.04.02",
+        "machine": "x86_64"
+    }
+}
