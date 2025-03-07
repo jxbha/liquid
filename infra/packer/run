@@ -1,0 +1,2 @@
+#!/bin/bash
+packer build -var-file=credentials.pkrvars.hcl ubuntu-scaffold.pkr.hcl

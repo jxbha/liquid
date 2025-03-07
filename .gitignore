@@ -1,4 +1,7 @@
 .env
+.terraform*
 *.pkrvars.hcl
 *.tfvars
+*.tfstate*
+*.tfplan
 TODO

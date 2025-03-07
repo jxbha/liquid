@@ -1,0 +1,11 @@
+# Proxmox URL
+url  = ""
+
+# Promox Node
+node = ""
+
+# Username for defined Proxmox Token
+proxmox_api_id     = ""
+
+# Password for defined Proxmox Token
+proxmox_api_secret = ""

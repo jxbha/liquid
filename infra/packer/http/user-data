@@ -12,6 +12,8 @@ autoinstall:
     storage:
         layout:
             name: direct
+        swap:
+            size: 0
     user-data:
         disable_root: true
         package_upgrade: false

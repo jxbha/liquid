@@ -16,6 +16,7 @@ type RequestHandler interface {
 	List(w http.ResponseWriter, r *http.Request)
 	Get(w http.ResponseWriter, r *http.Request)
 	Create(w http.ResponseWriter, r *http.Request)
+	CheckAlive(w http.ResponseWriter, r *http.Request)
 }
 
 func NewHandler(db *database.Connection) *Handler {
@@ -57,4 +58,8 @@ func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	handler.db.Create(p)
 
+}
+
+func (handler *Handler) CheckAlive(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Yes, this works")
 }
