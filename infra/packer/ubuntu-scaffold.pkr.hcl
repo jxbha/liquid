@@ -8,25 +8,31 @@ packer {
 }
 
 variable "proxmox_api_secret" {
-  type = string
+  description = "Password for defined Proxmox Token"
+  type        = string
 }
 
 variable "proxmox_api_id" {
-  type = string
+  description = "Username for defined Proxmox Token"
+  type        = string
 }
 
 variable "node" {
-  type = string
+  description = "Promox Node"
+  type        = string
 }
 
 variable "url" {
-  type = string
+  description = "Proxmox URL"
+  type        = string
 }
 
 variable "vmid" {
-  type = number
-  default = 9999
+  description = "Desired template ID"
+  type        = number
+  default     = 9999
 }
+
 
 source "proxmox-iso" "ubuntu" {
   boot_iso {
@@ -84,19 +90,19 @@ build {
   # provisioner "shell-local" {
   #   inline = [
   #     # this may not be needed; see [here](https://github.com/hashicorp/packer-plugin-proxmox/pull/93)
-  #     "curl -k -X DELETE 'https://${var.url}:8006/api2/json/nodes/${var.node}/qemu/${var.vmid}' -H 'Authorization: PVEAPIToken=${var.proxmox_api_id}=${var.proxmox_api_secret}' || true"
+  # "curl -k -X DELETE 'https://${var.url}:8006/api2/json/nodes/${var.node}/qemu/${var.vmid}' -H 'Authorization: PVEAPIToken=${var.proxmox_api_id}=${var.proxmox_api_secret}' || true"
   #   ]
   # }
   provisioner "shell" {
     inline = [
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
-      "sudo rm /etc/ssh/ssh_host_*",
       "sudo truncate -s 0 /etc/machine-id",
       "sudo apt -y autoremove --purge",
       "sudo apt -y clean",
       "sudo apt -y autoclean",
       "sudo cloud-init clean",
       "sudo rm -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg",
+      "sudo rm -f /etc/netplan/*-installer-config.yaml",
       "sudo sync",
     ]
   }
@@ -105,9 +111,12 @@ build {
     source      = "files/99-pve.cfg"
     destination = "/tmp/99-pve.cfg"
   }
+
   provisioner "shell" {
     inline = [
       "sudo cp /tmp/99-pve.cfg /etc/cloud/cloud.cfg.d/99-pve.cfg",
+      "sudo swapoff -a",
+      "sudo sed -i '/\\/swap.img/ s/^/#/' /etc/fstab", # may not actually be necessary here
       "sudo sed -iE 's/^#DNS=$/DNS=192.168.3.15 1.1.1.1/' /etc/systemd/resolved.conf",
       "sudo sed -iE 's/^#FallbackDNS=$/FallbackDNS=8.8.8.8/' /etc/systemd/resolved.conf",
       "sudo sed -iE 's/GRUB_TIMEOUT=.*/GRUB_TIMEOUT=10/' /etc/default/grub",

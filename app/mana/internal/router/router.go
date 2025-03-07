@@ -11,6 +11,7 @@ func Routes(h handler.RequestHandler) *http.ServeMux {
 	mux.HandleFunc("/", h.List)
 	mux.HandleFunc("/view/{id}", h.Get)
 	mux.HandleFunc("/create", h.Create)
+	mux.HandleFunc("/livez", h.CheckAlive)
 
 	return mux
 }
