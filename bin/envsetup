@@ -9,10 +9,15 @@ link_env() {
     ln -s $ROOT/.env $ROOT/app/mana/.env
 }
 
+proxmox() {
+    export PROXMOX_VE_ENDPOINT="cathedral.jbernh.xyz"
+}
+
 # project-specific stuff
 extras() {
     :
     link_env
+    proxmox
 }
 
 # base project env
