@@ -3,3 +3,5 @@
   apt:
     name: "*"
     state: latest
+  retries: 3
+  delay: 3

@@ -129,7 +129,7 @@ module "ansible" {
 }
 
 resource "null_resource" "ansible" {
-  depends_on = [proxmox_virtual_environment_vm.kube-worker]
+  depends_on = [module.ansible]
   provisioner "local-exec" {
     when    = create
     command = "ANSIBLE_HOST_KEY_CHECKING=false ansible-playbook -i ../ansible/inventory.ini ../ansible/site.yaml"
