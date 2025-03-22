@@ -22,7 +22,7 @@
 - name: Copy kubeconfig to $USER
   ansible.builtin.fetch:
     src: /etc/kubernetes/admin.conf
-    dest: "{{ playbook_dir }}/liquid" # fix this directory
+    dest: "{{ playbook_dir }}/../terraform/liquid" 
     flat: true
 # kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml # probably another mirrored file
 - name: Download calico mainifest
