@@ -15,7 +15,7 @@ Environment
 
 Dependencies
 ---
-* **ansible**: community.general
+* **ansible**:
 
         ansible-galaxy collection install community.general
         ansible-galaxy collection install ansible.posix
