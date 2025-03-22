@@ -8,7 +8,6 @@ link_env() {
     fi
     ln -s $ROOT/.env $ROOT/app/mana/.env
 }
-
 proxmox() {
     export PROXMOX_VE_ENDPOINT="cathedral.jbernh.xyz"
 }

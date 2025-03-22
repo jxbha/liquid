@@ -11,3 +11,12 @@ Environment
 - **Kubernetes Distribution**: kubeadm
 - **Golden Images**: Packer w/ cloud-init
 - **IaC**: Terraform (OpenTofu)
+- **CaC**: Ansible
+
+Dependencies
+---
+* **ansible**: community.general
+
+        ansible-galaxy collection install community.general
+        ansible-galaxy collection install ansible.posix
+
