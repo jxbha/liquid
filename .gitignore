@@ -6,3 +6,6 @@
 *.tfplan
 TODO
 inventory.ini
+*topology*
+test.yaml
+liquid

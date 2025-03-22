@@ -1,0 +1,170 @@
+---
+# modprobe overlay
+# modprobe br_netfilter
+# echo "overlay" >> /etc/modules-load.d/containerd.conf
+# echo "br_netfilter" >> /etc/modules-load.d/containerd.conf
+- name: Add overlay module with persistence
+  community.general.modprobe:
+    name: overlay
+    state: present
+    persistent: present
+- name: Add br_netfilter module with persistence
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
+    persistent: present
+# sysctl -w net.bridge.bridge-nf-call-iptables=1
+# sysctl -w net.ipv4.ip_forward=1
+# echo "net.bridge.bridge-nf-call-iptables=1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
+# echo "net.ipv4.ip_forward=1" | sudo tee -a /etc/sysctl.d/99-kubernetes-cri.conf
+# sysctl --system
+- name: Set net.ipv4.ip_forward
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+- name: Set net.bridge.bridge-nf-call-iptables
+  ansible.posix.sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+# sudo apt-get install -y apt-transport-https ca-certificates curl
+- name: Install base packages
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
+- name: Copy resolved configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/srv/resolved.conf"
+    dest: /etc/systemd/resolved.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+# mkdir /etc/containerd
+- name: Create /etc/containerd
+  ansible.builtin.file:
+    path: /etc/containerd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+# curl -L https://github.com/containerd/containerd/releases/download/v2.0.3/containerd-2.0.3-linux-amd64.tar.gz | tar xvz -C /usr/local/
+# curl -OL https://raw.githubusercontent.com/containerd/containerd/main/containerd.service /usr/local/lib/systemd/system/
+# sudo systemctl enable -now containerd
+- name: Download containerd
+  ansible.builtin.get_url:
+    url: https://github.com/containerd/containerd/releases/download/v2.0.3/containerd-2.0.3-linux-amd64.tar.gz
+    dest: /tmp/containerd.tar.gz
+    mode: '0755'
+- name: Extract containerd
+  ansible.builtin.unarchive:
+    src: /tmp/containerd.tar.gz
+    dest: /usr/local/
+    remote_src: true
+- name: Download containerd systemd service
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/containerd/containerd/main/containerd.service
+    dest: /usr/lib/systemd/system/containerd.service
+    mode: '0755'
+- name: Enable systemd containerd
+  ansible.builtin.systemd_service:
+    name: containerd
+    state: "started"
+    enabled: true
+    masked: false
+# use shell here for the redirect
+# containerd config default > /etc/containerd/config.toml
+- name: Generate containerd config
+  ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
+# I think this can be command or shell since sed is handling everything
+# sed -i '/SystemdCGroup/ s/SystemdCgroup.*/SystemdCgroup = true/' /etc/containerd/config.toml
+- name: Enable systemd for cgroups in containerd
+  ansible.builtin.command: sed -i '/SystemdCGroup/ s/SystemdCgroup.*/SystemdCgroup = true/' /etc/containerd/config.toml
+# I think we gotta use shell here
+# separate into get and install, use mirror
+# install -m 755 <(curl -L https://github.com/opencontainers/runc/releases/download/v1.3.0-rc.1/runc.amd64) /usr/local/sbin/runc
+- name: Download runc
+  ansible.builtin.get_url:
+    url: https://github.com/opencontainers/runc/releases/download/v1.3.0-rc.1/runc.amd64
+    dest: /tmp/runc.amd64
+    mode: '0755'
+- name: Install runc
+  ansible.builtin.shell: install -m 755 /tmp/runc.amd64 /usr/local/sbin/runc
+# mkdir -p /opt/cni/bin
+- name: Create /opt/cni/bin
+  ansible.builtin.file:
+    path: /opt/cni/bin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+# curl -L https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz | tar xvz -C /opt/cni/bin
+- name: Download CNI plugins
+  ansible.builtin.get_url:
+    url: https://github.com/containernetworking/plugins/releases/download/v1.6.2/cni-plugins-linux-amd64-v1.6.2.tgz
+    dest: /tmp/cni-plugins-linux-amd64-v1.6.2.tgz
+    mode: '0755'
+- name: Extract CNI plugin drivers
+  ansible.builtin.unarchive:
+    src: /tmp/cni-plugins-linux-amd64-v1.6.2.tgz
+    dest: /opt/cni/bin
+    remote_src: true
+# curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+# echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+- name: Add Kubernetes APT repository
+  ansible.builtin.deb822_repository:
+    name: kubernetes
+    types: [deb]
+    uris: "https://pkgs.k8s.io/core:/stable:/v1.32/deb/"
+    signed_by: "https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key"
+    suites: [/]
+    state: present
+    enabled: true
+# sudo apt-get update
+- name: Run the equivalent of "apt-get update" as a separate step
+  ansible.builtin.apt:
+    update_cache: true
+# sudo apt-get install -y kubelet=1.32.2-1.1 kubeadm=1.32.2-1.1 kubectl=1.32.2-1.1
+- name: Install kube packages
+  ansible.builtin.apt:
+    pkg:
+      - kubelet=1.32.2-1.1
+      - kubeadm=1.32.2-1.1
+      - kubectl=1.32.2-1.1
+# sudo apt-mark hold kubelet kubeadm kubectl
+- name: Pin kubelet
+  ansible.builtin.dpkg_selections:
+    name: kubelet
+    selection: hold
+- name: Pin kubeadm
+  ansible.builtin.dpkg_selections:
+    name: kubeadm
+    selection: hold
+- name: Pin kubectl
+  ansible.builtin.dpkg_selections:
+    name: kubectl
+    selection: hold
+  # sudo systemctl daemon-reload
+- name: Just force systemd to reread configs (2.4 and above)
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+# sudo systemctl enable --now kubelet
+- name: Enable systemd kubelet
+  ansible.builtin.systemd_service:
+    name: kubelet
+    state: "started"
+    enabled: true
+    masked: false
+# TODO
+# set variables
+# - don't hardcode user
+# - don't hardcode pod-network-cidr
+# - don't hardcode kube-* version

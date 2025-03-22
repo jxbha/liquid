@@ -1,0 +1,11 @@
+---
+- name: Check if kubeadm is initialized
+  ansible.builtin.command: kubectl cluster-info --kubeconfig /etc/kubernetes/kubelet.conf
+  register: kubernetes_status
+  ignore_errors: true
+  changed_when: false
+
+- name: Kubeadm join command
+  ansible.builtin.command: "{{ hostvars[groups['controllers'][0]].kubeadm_join_cmd }}"
+  when: kubernetes_status.rc != 0
+  changed_when: kubernetes_status.rc != 0

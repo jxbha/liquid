@@ -1,0 +1,25 @@
+---
+
+- name: apply common configuration
+  become: true
+  hosts: all
+  roles:
+    - common
+
+- name: apply kubernetes configuration
+  hosts: all
+  become: true
+  roles:
+    - kube-base
+
+- name: Controller init
+  hosts: controllers
+  become: true
+  roles:
+    - kube-controller
+
+- name: Worker init
+  hosts: workers
+  become: true
+  roles:
+    - kube-worker
