@@ -96,7 +96,10 @@ build {
   provisioner "shell" {
     inline = [
       "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done",
+      # "cloud-init status --wait",
       "sudo truncate -s 0 /etc/machine-id",
+      "sudo apt update",
+      "sudo apt -y upgrade",
       "sudo apt -y autoremove --purge",
       "sudo apt -y clean",
       "sudo apt -y autoclean",

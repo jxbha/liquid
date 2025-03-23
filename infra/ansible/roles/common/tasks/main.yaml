@@ -1,7 +1,9 @@
 ---
-- name: Update all packages to their latest version
-  apt:
-    name: "*"
-    state: latest
-  retries: 3
-  delay: 3
+# sudo apt-get install -y apt-transport-https ca-certificates curl
+- name: Install base packages
+  ansible.builtin.apt:
+    pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg
