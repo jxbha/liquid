@@ -32,14 +32,6 @@
     sysctl_set: true
     state: present
     reload: true
-# sudo apt-get install -y apt-transport-https ca-certificates curl
-- name: Install base packages
-  ansible.builtin.apt:
-    pkg:
-      - apt-transport-https
-      - ca-certificates
-      - curl
-      - gnupg
 - name: Copy resolved configuration
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/srv/resolved.conf"

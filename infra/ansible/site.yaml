@@ -1,10 +1,10 @@
 ---
-- name: Ensure all hosts are online ready
+- name: Ensure all hosts are online
   hosts: all
   serial: 1
   gather_facts: false
   tasks:
-    - name: Wait for all hosts to be reachable
+    - name: Wait for hosts to sync
       ansible.builtin.wait_for_connection:
         timeout: 300
 
