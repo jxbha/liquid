@@ -9,4 +9,7 @@ inventory.ini
 *topology*
 test.yaml
 liquid
-root.key
+*.crt
+*.csr
+*.key
+keys.txt

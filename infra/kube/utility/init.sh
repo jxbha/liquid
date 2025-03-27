@@ -13,3 +13,4 @@ openssl x509 -req -in internal.csr -CA root.crt -CAkey $ROOTKEY -CAcreateserial 
 openssl verify -CAfile root.crt internal.crt
 #kubectl create secret tls internal --cert=internal.crt --key=internal.key -n dev-tools
 
+#sops -e -i --encrypted-regex ^(tls\.crt|tls\.key)$ secret.yaml
