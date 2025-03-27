@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: helper
+  namespace: dev-tools
+spec:
+  containers:
+  - name: helper
+    image: registry-svc.dev-tools.svc.cluster.local:5000/helper:latest
+    #    image: 10.43.193.102:5000/helper:latest
+    command:
+    - tail
+    - -f
+    - /dev/null
+    tty: true

@@ -39,11 +39,41 @@
     owner: root
     group: root
     mode: '0644'
+- name: Copy root certificate
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/srv/root.crt"
+    dest: /usr/local/share/ca-certificates/
+    owner: root
+    group: root
+    mode: '0644'
+- name: Copy resolved configuration
+  ansible.builtin.command: update-ca-certificates
 
 # mkdir /etc/containerd
 - name: Create /etc/containerd
   ansible.builtin.file:
     path: /etc/containerd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- name: Create relevant directories - data registry
+  ansible.builtin.file:
+    path: /opt/liquid/data-registry
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- name: Create relevant directories - mana data
+  ansible.builtin.file:
+    path: /etc/liquid/data-mana
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- name: Create relevant directories - mana logs
+  ansible.builtin.file:
+    path: /etc/liquid/logs-mana
     state: directory
     owner: root
     group: root
