@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db-mana
+  labels:
+    purpose: mana
+    database: postgresql
+  namespace: dev-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      purpose: mana
+      database: postgresql
+  template:
+    metadata:
+      labels:
+        purpose: mana
+        database: postgresql
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999  
+      volumes:
+      - name: data-mana
+        persistentVolumeClaim:
+          claimName: data-mana
+      - name: config-db-mana
+        configMap:
+          name: config-db-mana
+      - name: tls-cert
+        secret:
+          secretName: internal
+          defaultMode: 0600
+      containers:
+      - name: db-mana
+        image: postgres
+        imagePullPolicy: IfNotPresent
+        args:
+         - -c
+         - hba_file=/opt/postgres/pg_hba.conf
+         - -c
+         - config_file=/opt/postgres/postgresql.conf
+        env:
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: secret-db-mana
+                key: POSTGRES_USER
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: secret-db-mana
+                key: POSTGRES_PASSWORD
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: data-mana
+          mountPath: /var/lib/postgresql/data
+        - name: config-db-mana
+          mountPath: /opt/postgres
+        - name: tls-cert
+          mountPath: /etc/postgresql-conf

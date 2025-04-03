@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: data-registry
   labels:
-    purpose: "registry"
+    purpose: registry
 spec:
   capacity:
     storage: 10Gi
@@ -11,9 +11,18 @@ spec:
   storageClassName: local-storage
   accessModes:
   - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  hostPath:
+  persistentVolumeReclaimPolicy: Retain
+  local:
     path: "/opt/liquid/data-registry"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - kube-worker-02
+                - kube-worker-01
   
 ---
 apiVersion: v1
@@ -22,11 +31,11 @@ metadata:
   name: data-registry
   namespace: dev-tools
   labels:
-    purpose: "registry"
+    purpose: registry
 spec:
   selector:
     matchLabels:
-      purpose: "registry"
+      purpose: registry
   storageClassName: local-storage
   accessModes:
     - ReadWriteOnce

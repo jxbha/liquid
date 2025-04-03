@@ -1,5 +1,4 @@
 resources:
   - local-storage.yaml
-  - app/
-  - database/postgresql/
   - registry/
+  - mana/

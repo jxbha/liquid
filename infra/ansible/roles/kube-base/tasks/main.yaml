@@ -39,6 +39,11 @@
     owner: root
     group: root
     mode: '0644'
+- name: Restart systemd-resolved
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    name: systemd-resolved
 - name: Copy root certificate
   ansible.builtin.copy:
     src: "{{ playbook_dir }}/srv/root.crt"
@@ -46,9 +51,8 @@
     owner: root
     group: root
     mode: '0644'
-- name: Copy resolved configuration
+- name: Update CA certificates
   ansible.builtin.command: update-ca-certificates
-
 # mkdir /etc/containerd
 - name: Create /etc/containerd
   ansible.builtin.file:
@@ -108,8 +112,8 @@
   ansible.builtin.shell: containerd config default > /etc/containerd/config.toml
 # I think this can be command or shell since sed is handling everything
 # sed -i '/SystemdCGroup/ s/SystemdCgroup.*/SystemdCgroup = true/' /etc/containerd/config.toml
-- name: Enable systemd for cgroups in containerd
-  ansible.builtin.command: sed -i '/SystemdCGroup/ s/SystemdCgroup.*/SystemdCgroup = true/' /etc/containerd/config.toml
+# - name: Enable systemd for cgroups in containerd
+#   ansible.builtin.command: sed -i '/SystemdCGroup/ s/SystemdCgroup.*/SystemdCgroup = true/' /etc/containerd/config.toml
 # I think we gotta use shell here
 # separate into get and install, use mirror
 # install -m 755 <(curl -L https://github.com/opencontainers/runc/releases/download/v1.3.0-rc.1/runc.amd64) /usr/local/sbin/runc
