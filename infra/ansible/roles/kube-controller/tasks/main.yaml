@@ -20,13 +20,14 @@
     kubeadm_join_cmd: "{{ join_command.stdout }}"
 # # sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 - name: Clear workstation's kubeconfig
+  become: false
   ansible.builtin.file:
     path: "{{ playbook_dir }}/../liquid"
     state: absent
   delegate_to: localhost
 - name: Copy kubeconfig to $USER
   ansible.builtin.fetch:
-    src: /tmp/admin.conf
+    src: /etc/kubernetes/admin.conf
     dest: "{{ playbook_dir }}/../liquid" 
     flat: true
 # kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml # probably another mirrored file

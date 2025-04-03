@@ -2,31 +2,43 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    purpose: "registry"
+    purpose: registry
   name: registry
   namespace: dev-tools
 spec:
   replicas: 1
   selector:
     matchLabels:
-      purpose: "registry"
+      purpose: registry
   template:
     metadata:
       labels:
-        purpose: "registry"
+        purpose: registry
     spec:
       containers:
       - name: registry
         image: registry:2
         ports:
         - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: config-registry
         env:
         - name: REGISTRY_HTTP_TLS_CERTIFICATE
-          value: /etc/registry/certs/tls.crt
+          valueFrom: 
+            configMapKeyRef:
+              name: config-registry
+              key: REGISTRY_HTTP_TLS_CERTIFICATE
         - name: REGISTRY_HTTP_TLS_KEY
-          value: /etc/registry/certs/tls.key
+          valueFrom: 
+            configMapKeyRef:
+              name: config-registry
+              key: REGISTRY_HTTP_TLS_KEY
         - name: REGISTRY_HTTP_SECRET
-          value: "1nsecur1ty"
+          valueFrom: 
+            secretKeyRef:
+              name: secret-registry
+              key: REGISTRY_HTTP_SECRET
         volumeMounts:
         - name: registry-data
           mountPath: /var/lib/registry

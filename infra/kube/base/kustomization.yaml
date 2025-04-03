@@ -1,4 +1,4 @@
 resources:
   # - configmaps/
-  # - secrets/
+  - secrets/
   - volumes/

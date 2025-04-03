@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: logs-mana
   labels:
-    purpose: "mana"
+    purpose: mana
 spec:
   capacity:
     storage: 50Mi
@@ -11,9 +11,17 @@ spec:
   storageClassName: local-storage
   accessModes:
   - ReadWriteOnce
-  persistentVolumeReclaimPolicy: Delete
-  hostPath:
+  persistentVolumeReclaimPolicy: Retain
+  local:
     path: "/opt/liquid/logs-mana"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - kube-worker-01
 
 ---
 
@@ -25,7 +33,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      purpose: "mana"
+      purpose: mana
   storageClassName: local-storage
   accessModes:
     - ReadWriteOnce

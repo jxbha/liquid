@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-registry
+  labels:
+    purpose: registry
+data:
+  REGISTRY_HTTP_TLS_CERTIFICATE: /etc/registry/certs/tls.crt
+  REGISTRY_HTTP_TLS_KEY: /etc/registry/certs/tls.key
