@@ -3,8 +3,8 @@ kind: PersistentVolume
 metadata:
   name: data-mana
   labels:
-    purpose: "mana"
-    database: "postgresql"
+    purpose: mana
+    database: postgresql
 spec:
   capacity:
     storage: 5Gi
@@ -12,8 +12,17 @@ spec:
   storageClassName: local-storage
   accessModes:
   - ReadWriteOnce
-  hostPath:
+  persistentVolumeReclaimPolicy: Retain
+  local:
     path: "/opt/liquid/data-mana"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: In
+              values:
+                - kube-worker-02
 
 ---
 
@@ -25,8 +34,8 @@ metadata:
 spec:
   selector:
     matchLabels:
-      purpose: "mana"
-      database: "postgresql"
+      purpose: mana
+      database: postgresql
   storageClassName: local-storage
   accessModes:
     - ReadWriteOnce

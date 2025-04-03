@@ -1,4 +1,5 @@
 #!/bin/zsh
+# working subshell, similar to python's venv
 
 export ROOT=$(pwd)
 
@@ -21,7 +22,7 @@ extras() {
 
 # base project env
 (
-    while read i; do export $i; done <$ROOT/.env
+    while read line; do export $line; done < <(envsubst < $ROOT/.env)
     export PATH=$PATH:$ROOT/bin
     export DEVSPACE=true
     extras

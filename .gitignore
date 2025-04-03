@@ -1,15 +1,25 @@
+# general
+TODO
+*topology*
+test.yaml
+
+# sensitive ENV
 .env
+.sops.yaml
+keys.txt
+
+# deployment statefiles & misc
 .terraform*
 *.pkrvars.hcl
 *.tfvars
 *.tfstate*
 *.tfplan
-TODO
 inventory.ini
-*topology*
-test.yaml
+
+# kubeconfig
 liquid
+
+# secrets
 *.crt
 *.csr
 *.key
-keys.txt
