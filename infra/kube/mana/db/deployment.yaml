@@ -31,11 +31,19 @@ spec:
           name: config-db-mana
       - name: tls-cert
         secret:
+<<<<<<< HEAD
           secretName: secret-internal
           defaultMode: 0600
       containers:
       - name: db-mana
         image: registry-svc.dev-tools.svc.cluster.local:5000/postgres:latest
+=======
+          secretName: internal
+          defaultMode: 0600
+      containers:
+      - name: db-mana
+        image: postgres
+>>>>>>> origin
         imagePullPolicy: IfNotPresent
         args:
          - -c
