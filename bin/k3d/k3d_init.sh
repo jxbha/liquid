@@ -23,8 +23,9 @@ init() {
     k3d kubeconfig get jx > $TEMPFILE
     # TODO: replace values in-place in ~/.kube/
     sed -i s/'0.0.0.0'/$HOST_IP/ $TEMPFILE
-    export KUBECONFIG=$TEMPFILE
+    export KUBECONFIG=$(pwd/$TEMPFILE)
     kubectl create namespace dev-tools
+    kubectl create namespace app
     deploy
 
     #rm $TEMPFILE
@@ -38,7 +39,7 @@ create_registry(){
 
 create_cluster(){
     echo "Creating cluster..."
-    k3d cluster create -v /opt/liquid/data-registry:/opt/liquid/data-registry -v /opt/liquid/logs-mana:/opt/liquid/logs-mana -v /opt/liquid/data-mana:/opt/liquid/data-mana -p 30000-30100:30000-30100@server:0 --api-port 8888 --registry-use jx-registry --network jx-env --k3s-arg "--tls-san=$ADDRESS@server:0" --k3s-arg "--kubelet-arg=feature-gates=KubeletInUserNamespace=true@server:0" jx
+    k3d cluster create -v /opt/liquid/data-registry:/opt/liquid/data-registry -v /opt/liquid/logs-mana:/opt/liquid/logs-mana -v /opt/liquid/data-mana:/opt/liquid/data-mana -p 30000-30100:30000-30100 --api-port 8888 --registry-use jx-registry --network jx-env --k3s-arg "--tls-san=$ADDRESS@server:0" --k3s-arg "--kubelet-arg=feature-gates=KubeletInUserNamespace=true@server:0" jx
 }
 
 prepare_registry(){
@@ -49,7 +50,8 @@ prepare_registry(){
     registry_jxwb
     registry_kubectl
     registry_golang
-    registry_mongo
+    #registry_mongo
+    registry_postgres
     update_registry_source
 }
 
@@ -77,6 +79,11 @@ registry_golang(){
 registry_mongo(){
     docker tag mongo k3d-jx-registry.localhost:$PORT/mongo
     docker push k3d-jx-registry.localhost:$PORT/mongo
+}
+
+registry_postgres(){
+    docker tag postgres k3d-jx-registry.localhost:$PORT/postgres
+    docker push k3d-jx-registry.localhost:$PORT/postgres
 }
 
 update_registry_source(){

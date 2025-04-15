@@ -12,6 +12,9 @@ for file in $targets; do
         rm $tmp
         continue
     fi
+
     mv "$tmp" "$target"
-    rm "$file"
+    if [[ -s "$target" ]]; then
+        rm "$file"
+    fi
 done
