@@ -18,6 +18,7 @@ inventory.ini
 
 # kubeconfig
 liquid
+kconfig
 
 # secrets
 *.crt

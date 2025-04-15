@@ -21,10 +21,10 @@ type Connection struct {
 }
 
 func NewDB() (*Connection, error) {
-	POSTGRES_UN := os.Getenv("POSTGRES_UN")
-	POSTGRES_PW := os.Getenv("POSTGRES_PW")
-	POSTGRES_URI := os.Getenv("POSTGRES_URI")
-	URI := fmt.Sprintf("postgres://%v:%v@%v", POSTGRES_UN, POSTGRES_PW, POSTGRES_URI)
+	DATABASE_UN := os.Getenv("DATABASE_UN")
+	DATABASE_PW := os.Getenv("DATABASE_PW")
+	DATABASE_HOST := os.Getenv("DATABASE_HOST")
+	URI := fmt.Sprintf("postgres://%v:%v@%v", DATABASE_UN, DATABASE_PW, DATABASE_HOST)
 
 	conn, err := sql.Open("pgx", URI)
 
@@ -41,7 +41,7 @@ func NewDB() (*Connection, error) {
 
 func (conn *Connection) List() ([]Pair, error) {
 	pairs := []Pair{}
-	rows, err := conn.DB.Query("SELECT * FROM test")
+	rows, err := conn.DB.Query("SELECT * FROM persist")
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (conn *Connection) List() ([]Pair, error) {
 }
 
 func (conn *Connection) Get(id int) (Pair, error) {
-	stmt := `SELECT * FROM test WHERE id = $1`
+	stmt := `SELECT * FROM persist WHERE id = $1`
 	var p Pair
 	err := conn.DB.QueryRow(stmt, id).Scan(&p.Id, &p.Key, &p.Val)
 	if err != nil {
@@ -69,7 +69,7 @@ func (conn *Connection) Get(id int) (Pair, error) {
 }
 
 func (conn *Connection) Create(p Pair) (int, error) {
-	stmt := `INSERT INTO TEST (key, val) VALUES ($1, $2) RETURNING id`
+	stmt := `INSERT INTO persist (key, value) VALUES ($1, $2) RETURNING id`
 	var id int
 	err := conn.DB.QueryRow(stmt, p.Key, p.Val).Scan(&id)
 	if err != nil {

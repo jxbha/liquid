@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-mana-svc
+  namespace: app
+spec:
+  type: ClusterIP
+  selector:
+    purpose: mana
+    database: postgresql
+  ports:
+    - port: 5432
+      targetPort: 5432

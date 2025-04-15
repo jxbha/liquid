@@ -5,7 +5,7 @@ metadata:
   labels:
     purpose: mana
     database: postgresql
-  namespace: dev-tools
+  namespace: app
 spec:
   replicas: 1
   selector:
@@ -31,11 +31,11 @@ spec:
           name: config-db-mana
       - name: tls-cert
         secret:
-          secretName: internal
+          secretName: secret-internal
           defaultMode: 0600
       containers:
       - name: db-mana
-        image: postgres
+        image: registry-svc.dev-tools.svc.cluster.local:5000/postgres:latest
         imagePullPolicy: IfNotPresent
         args:
          - -c
@@ -53,6 +53,11 @@ spec:
               secretKeyRef:
                 name: secret-db-mana
                 key: POSTGRES_PASSWORD
+          - name: POSTGRES_DB
+            valueFrom:
+              secretKeyRef:
+                name: secret-db-mana
+                key: POSTGRES_DB
         ports:
         - containerPort: 5432
         volumeMounts:

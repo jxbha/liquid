@@ -22,14 +22,14 @@ spec:
               operator: In
               values:
                 - kube-worker-01
-
+                - minikube
 ---
 
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: logs-mana
-  namespace: dev-tools
+  namespace: app
 spec:
   selector:
     matchLabels:

@@ -23,7 +23,8 @@ spec:
               values:
                 - kube-worker-02
                 - kube-worker-01
-  
+                - minikube
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

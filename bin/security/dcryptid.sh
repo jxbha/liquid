@@ -8,11 +8,13 @@ for file in $targets; do
     tmp="$file.tmp"
 
     echo "decrypting $file"
-    
     if ! sops -d $file > $tmp; then
         rm $tmp
         continue
     fi
+
     mv "$tmp" "$target"
-    rm "$file"
+    if [[ -s "$target" ]]; then
+        rm "$file"
+    fi
 done
