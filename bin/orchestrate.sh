@@ -4,11 +4,12 @@ cd $ROOT
 display_help(){
     echo "Usage: $0 <command> [options]"
     echo "Available options:"
-    echo "  help         You are here."
-    echo "  minikube     Runs the minikube bootstrapper. Minikube must be running (for now.)"
-    echo "  k3d          Runs the k3d bootstrapper. This may be deprecated in the future."
-    echo "  decrypt      Decrypts all secrets in the project."
-    echo "  encrypt      Encrypts all secrets in the project."
+    echo "  help             You are here."
+    echo "  minikube         Runs the minikube bootstrapper. Minikube must be running (for now.)"
+    echo "  k3d              Runs the k3d bootstrapper. This may be deprecated in the future."
+    echo "  decrypt          Decrypts all secrets in the project."
+    echo "  encrypt          Encrypts all secrets in the project."
+    echo "  certificates     Create necessary internal self-signed certificates."
 }
 
 minikube_setup(){
@@ -27,6 +28,10 @@ dcryptid(){
     ./bin/security/dcryptid.sh
 }
 
+certificates(){
+    ./bin/security/selfsign.sh
+}
+
 main() {
     case "$1" in
         "help")
@@ -43,6 +48,9 @@ main() {
             ;;
         "decrypt")
             dcryptid
+            ;;
+        "certificates")
+            certificates
             ;;
         *)
             display_help

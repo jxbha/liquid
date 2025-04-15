@@ -24,7 +24,6 @@ spec:
               values:
                 - kube-worker-02
                 - minikube
-
 ---
 
 apiVersion: v1
