@@ -4,7 +4,7 @@ metadata:
   name: config-db-mana
   namespace: app
   labels:
-    purpose: mana
+    purpose: data-mana
     database: postgresql
 data:
   postgresql.conf: |

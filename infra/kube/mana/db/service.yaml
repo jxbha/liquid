@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    purpose: mana
+    purpose: data-mana
     database: postgresql
   ports:
     - port: 5432

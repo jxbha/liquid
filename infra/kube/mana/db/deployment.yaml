@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   name: db-mana
   labels:
-    purpose: mana
+    purpose: data-mana
     database: postgresql
   namespace: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      purpose: mana
+      purpose: data-mana
       database: postgresql
   template:
     metadata:
       labels:
-        purpose: mana
+        purpose: data-mana
         database: postgresql
     spec:
       securityContext:
