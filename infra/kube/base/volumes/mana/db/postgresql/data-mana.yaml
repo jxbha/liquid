@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: data-mana
   labels:
-    purpose: mana
+    purpose: data-mana
     database: postgresql
 spec:
   capacity:
@@ -34,7 +34,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      purpose: mana
+      purpose: data-mana
       database: postgresql
   storageClassName: local-storage
   accessModes:

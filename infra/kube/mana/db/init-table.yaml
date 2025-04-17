@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-table
+spec:
+  template:
+    spec:
+      containers:
+      - name: init-store
+        image: postgres:16
+        command: ["sh",  "-c", "psql -h db-mana-svc.app.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c \"CREATE TABLE $POSTGRES_DB(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: secret-db-mana
+                key: POSTGRES_PASSWORD
+        envFrom:
+        - secretRef:
+            name: secret-db-mana
+      restartPolicy: Never
+  backoffLimit: 4

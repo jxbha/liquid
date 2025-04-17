@@ -56,7 +56,10 @@ func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, http.StatusBadRequest)
 	}
 
-	handler.db.Create(p)
+	_, err = handler.db.Create(p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 }
 

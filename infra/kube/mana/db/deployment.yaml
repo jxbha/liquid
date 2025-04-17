@@ -3,19 +3,19 @@ kind: Deployment
 metadata:
   name: db-mana
   labels:
-    purpose: mana
+    purpose: data-mana
     database: postgresql
   namespace: app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      purpose: mana
+      purpose: data-mana
       database: postgresql
   template:
     metadata:
       labels:
-        purpose: mana
+        purpose: data-mana
         database: postgresql
     spec:
       securityContext:
@@ -31,19 +31,11 @@ spec:
           name: config-db-mana
       - name: tls-cert
         secret:
-<<<<<<< HEAD
           secretName: secret-internal
           defaultMode: 0600
       containers:
       - name: db-mana
         image: registry-svc.dev-tools.svc.cluster.local:5000/postgres:latest
-=======
-          secretName: internal
-          defaultMode: 0600
-      containers:
-      - name: db-mana
-        image: postgres
->>>>>>> origin
         imagePullPolicy: IfNotPresent
         args:
          - -c
