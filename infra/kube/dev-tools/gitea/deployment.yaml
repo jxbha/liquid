@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea
+  namespace: dev-tools
+  labels:
+    purpose: git
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      purpose: git
+  template:
+    metadata:
+      labels:
+        purpose: git
+    spec:
+      volumes:
+      - name: data-gitea
+        persistentVolumeClaim:
+          claimName: data-gitea
+      - name: gitea-secret
+        secret:
+          secretName: gitea-secret
+      containers:
+        - name: gitea
+          image: gitea/gitea:1.23.7
+          env:
+          - name: USER_UID
+            value: "1000"
+          - name: USER_GID
+            value: "1000"
+          ports:
+          - name: ssh
+            containerPort: 22
+          - name: http
+            containerPort: 3000
+          volumeMounts:
+          - name: data-gitea
+            mountPath: /data/gitea
+          - name: gitea-secret
+            mountPath: /data/gitea/conf/app.ini
+            subPath: app.ini

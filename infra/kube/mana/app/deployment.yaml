@@ -21,11 +21,11 @@ spec:
           claimName: logs-mana
       containers:
       - name: mana
-        image: registry-svc.dev-tools.svc.cluster.local:5000/mana:1
+        image: registry.dev-tools.svc.cluster.local:5000/mana:1
         imagePullPolicy: IfNotPresent
         envFrom:
         - secretRef:
-            name: secret-mana
+            name: mana-secret
         ports:
         - containerPort: 4040
         volumeMounts:

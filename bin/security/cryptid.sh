@@ -8,7 +8,7 @@ for file in $targets; do
     tmp="$file.tmp"
 
     echo "encrypting $file"
-    if ! sops -e --encrypted-regex "^(data)$" $file > $tmp; then
+    if ! sops -e --encrypted-regex "^(stringData)$" $file > $tmp; then
         rm $tmp
         continue
     fi

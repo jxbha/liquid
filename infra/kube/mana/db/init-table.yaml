@@ -8,15 +8,17 @@ spec:
       containers:
       - name: init-store
         image: postgres:16
-        command: ["sh",  "-c", "psql -h db-mana-svc.app.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c \"CREATE TABLE $POSTGRES_DB(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
+        command: ["sh",  "-c", "psql -h db.app.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c \"CREATE TABLE $MANA_TABLE(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
         env:
           - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
-                name: secret-db-mana
+                name: db-secret
                 key: POSTGRES_PASSWORD
-        envFrom:
-        - secretRef:
-            name: secret-db-mana
+          - name: MANA_TABLE
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: MANA_TABLE
       restartPolicy: Never
   backoffLimit: 4

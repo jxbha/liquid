@@ -6,7 +6,7 @@ metadata:
 spec:
   containers:
   - name: helper
-    image: registry-svc.dev-tools.svc.cluster.local:5000/helper:3
+    image: registry.dev-tools.svc.cluster.local:5000/helper:3
     command:
     - tail
     - -f

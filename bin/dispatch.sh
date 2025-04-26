@@ -9,7 +9,8 @@ display_help(){
     echo "  k3d              Runs the k3d bootstrapper. This may be deprecated in the future."
     echo "  decrypt          Decrypts all secrets in the project."
     echo "  encrypt          Encrypts all secrets in the project."
-    echo "  certificates     Create necessary internal self-signed certificates."
+    echo "  certificates     Create necessary self-signed certificates."
+    echo "  registry         Prepare registry with images from podman."
 }
 
 minikube_setup(){
@@ -17,7 +18,8 @@ minikube_setup(){
 }
 
 k3d_init(){
-    ./bin/k3d/k3d_init.sh
+    shift
+    ./bin/k3d/k3d_init.sh "$@"
 }
 
 cryptid(){
@@ -29,7 +31,13 @@ dcryptid(){
 }
 
 certificates(){
-    ./bin/security/selfsign.sh
+    shift
+    ./bin/security/selfsign.sh "$@"
+}
+
+registry() {
+    shift
+    ./bin/scripts/registry_init.sh "$@"
 }
 
 main() {
@@ -51,6 +59,9 @@ main() {
             ;;
         "certificates")
             certificates
+            ;;
+        "registry")
+            registry
             ;;
         *)
             display_help

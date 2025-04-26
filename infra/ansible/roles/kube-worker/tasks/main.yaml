@@ -4,8 +4,35 @@
   register: kubernetes_status
   ignore_errors: true
   changed_when: false
-
 - name: Kubeadm join command
   ansible.builtin.command: "{{ hostvars[groups['controllers'][0]].kubeadm_join_cmd }}"
   when: kubernetes_status.rc != 0
   changed_when: kubernetes_status.rc != 0
+- name: Create relevant directories - data registry
+  ansible.builtin.file:
+    path: /opt/liquid/data-registry
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- name: Create relevant directories - mana data
+  ansible.builtin.file:
+    path: /etc/liquid/data-mana
+    state: directory
+    owner: 999
+    group: 999
+    mode: '0755'
+- name: Create relevant directories - mana logs
+  ansible.builtin.file:
+    path: /etc/liquid/logs-mana
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- name: Create relevant directories - git data
+  ansible.builtin.file:
+    path: /etc/liquid/data-git
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'

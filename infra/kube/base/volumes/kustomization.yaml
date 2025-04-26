@@ -2,3 +2,5 @@ resources:
   - local-storage.yaml
   - registry/
   - mana/
+  - tools/
+  - gitea/

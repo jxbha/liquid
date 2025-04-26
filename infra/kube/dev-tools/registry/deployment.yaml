@@ -22,22 +22,12 @@ spec:
         - containerPort: 5000
         envFrom:
         - configMapRef:
-            name: config-registry
+            name: registry-config
         env:
-        - name: REGISTRY_HTTP_TLS_CERTIFICATE
-          valueFrom: 
-            configMapKeyRef:
-              name: config-registry
-              key: REGISTRY_HTTP_TLS_CERTIFICATE
-        - name: REGISTRY_HTTP_TLS_KEY
-          valueFrom: 
-            configMapKeyRef:
-              name: config-registry
-              key: REGISTRY_HTTP_TLS_KEY
         - name: REGISTRY_HTTP_SECRET
           valueFrom: 
             secretKeyRef:
-              name: secret-registry
+              name: registry-secret
               key: REGISTRY_HTTP_SECRET
         volumeMounts:
         - name: registry-data
@@ -51,4 +41,4 @@ spec:
           claimName: data-registry
       - name: tls-cert
         secret:
-          secretName: secret-internal
+          secretName: ssl-internal

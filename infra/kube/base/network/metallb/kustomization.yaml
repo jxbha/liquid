@@ -1,0 +1,3 @@
+resources:
+  - metallb-native.yaml
+  - config.yaml

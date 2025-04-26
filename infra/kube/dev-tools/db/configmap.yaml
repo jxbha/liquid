@@ -2,10 +2,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: db-config
-  namespace: app
+  namespace: dev-tools
   labels:
-    purpose: data-mana
-    database: postgresql
+    purpose: data-tools
 data:
   postgresql.conf: |
     listen_addresses = '*'
