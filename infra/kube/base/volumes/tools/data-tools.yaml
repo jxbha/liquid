@@ -1,20 +1,19 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: data-mana
+  name: data-tools
   labels:
-    purpose: data-mana
-    database: postgresql
+    purpose: tools
 spec:
   capacity:
-    storage: 5Gi
+    storage: 2Gi
   volumeMode: Filesystem
   storageClassName: local-storage
   accessModes:
   - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain
   local:
-    path: "/opt/liquid/data-mana"
+    path: "/opt/liquid/data-tools"
   nodeAffinity:
     required:
       nodeSelectorTerms:
@@ -22,6 +21,7 @@ spec:
             - key: kubernetes.io/hostname
               operator: In
               values:
+                - kube-worker-01
                 - kube-worker-02
                 - minikube
 
@@ -30,16 +30,15 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: data-mana
-  namespace: app
+  name: data-tools
+  namespace: dev-tools
 spec:
   selector:
     matchLabels:
-      purpose: data-mana
-      database: postgresql
+      purpose: tools
   storageClassName: local-storage
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 5Gi
+      storage: 2Gi

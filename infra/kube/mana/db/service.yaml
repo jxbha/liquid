@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-mana-svc
+  name: db
   namespace: app
 spec:
   type: ClusterIP

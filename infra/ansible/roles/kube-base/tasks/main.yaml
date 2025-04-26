@@ -61,27 +61,6 @@
     owner: root
     group: root
     mode: '0755'
-- name: Create relevant directories - data registry
-  ansible.builtin.file:
-    path: /opt/liquid/data-registry
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-- name: Create relevant directories - mana data
-  ansible.builtin.file:
-    path: /etc/liquid/data-mana
-    state: directory
-    owner: 999
-    group: 999
-    mode: '0755'
-- name: Create relevant directories - mana logs
-  ansible.builtin.file:
-    path: /etc/liquid/logs-mana
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
 # curl -L https://github.com/containerd/containerd/releases/download/v2.0.3/containerd-2.0.3-linux-amd64.tar.gz | tar xvz -C /usr/local/
 # curl -OL https://raw.githubusercontent.com/containerd/containerd/main/containerd.service /usr/local/lib/systemd/system/
 # sudo systemctl enable -now containerd

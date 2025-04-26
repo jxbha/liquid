@@ -3,29 +3,26 @@ kind: Deployment
 metadata:
   name: db
   labels:
-    purpose: data-mana
-    database: postgresql
-  namespace: app
+    purpose: data-tools
+  namespace: dev-tools
 spec:
   replicas: 1
   selector:
     matchLabels:
-      purpose: data-mana
-      database: postgresql
+      purpose: data-tools
   template:
     metadata:
       labels:
-        purpose: data-mana
-        database: postgresql
+        purpose: data-tools
     spec:
       securityContext:
         runAsUser: 999
         runAsGroup: 999
         fsGroup: 999  
       volumes:
-      - name: data-mana
+      - name: data-tools
         persistentVolumeClaim:
-          claimName: data-mana
+          claimName: data-tools
       - name: db-config
         configMap:
           name: db-config
@@ -61,7 +58,7 @@ spec:
         ports:
         - containerPort: 5432
         volumeMounts:
-        - name: data-mana
+        - name: data-tools
           mountPath: /var/lib/postgresql/data
         - name: db-config
           mountPath: /opt/postgres
