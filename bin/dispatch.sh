@@ -1,72 +1,69 @@
 #!/bin/bash
 
+set -e
+
 cd $ROOT
-display_help(){
-    echo "Usage: $0 <command> [options]"
-    echo "Available options:"
-    echo "  help             You are here."
-    echo "  minikube         Runs the minikube bootstrapper. Minikube must be running (for now.)"
-    echo "  k3d              Runs the k3d bootstrapper. This may be deprecated in the future."
-    echo "  decrypt          Decrypts all secrets in the project."
-    echo "  encrypt          Encrypts all secrets in the project."
-    echo "  certificates     Create necessary self-signed certificates."
-    echo "  registry         Prepare registry with images from podman."
+BIN=$ROOT/bin
+
+usage(){
+    cat <<EOF
+Usage: $0 <command> [options]
+
+Available options:
+    help             You are here."
+    minikube         Runs the minikube bootstrapper. Minikube must be running (for now.)
+    k3d              Runs the k3d bootstrapper. This may be deprecated in the future.
+    decrypt          Decrypts all secrets in the project.
+    encrypt          Encrypts all secrets in the project.
+    certs            Create necessary self-signed certificates.
+    registry         Prepare registry with images from podman.
+    images           Check current images in cluster registry.
+    image            Check tags for provided image.
+EOF
 }
 
-minikube_setup(){
-    ./bin/minikube/minikube_setup.sh
-}
+main(){
+    if [[ $# -eq 0 ]]; then
+        usage
+        exit 1
+    fi
 
-k3d_init(){
+    local command="$1"
     shift
-    ./bin/k3d/k3d_init.sh "$@"
-}
 
-cryptid(){
-    ./bin/security/cryptid.sh
-}
-
-dcryptid(){
-    ./bin/security/dcryptid.sh
-}
-
-certificates(){
-    shift
-    ./bin/security/selfsign.sh "$@"
-}
-
-registry() {
-    shift
-    ./bin/scripts/registry_init.sh "$@"
-}
-
-main() {
-    case "$1" in
-        "help")
-            display_help
+    case "$command" in
+        help)
+            usage
             ;;
-        "minikube")
-            minikube_setup
+        minikube)
+            $BIN/minikube/minikube_setup.sh "$@"
             ;;
-        "k3d")
-            k3d_init
+        k3d)
+            $BIN/k3d/k3d_init.sh "$@"
             ;;
-        "encrypt")
-            cryptid
+        encrypt)
+            $BIN/security/cryptid.sh "$@"
             ;;
-        "decrypt")
-            dcryptid
+        decrypt)
+            $BIN/security/dcryptid.sh "$@"
             ;;
-        "certificates")
-            certificates
+        certs)
+            $BIN/security/selfsign.sh "$@"
             ;;
-        "registry")
-            registry
+        registry)
+            $BIN/scripts/registry_init.sh "$@"
+            ;;
+        images)
+            $BIN/scripts/registry_list_images.sh "$@"
+            ;;
+        image)
+            $BIN/scripts/registry_inspect_image.sh "$@"
             ;;
         *)
-            display_help
+            echo -e "[ERROR] Unknown command: $command\n"
+            usage
             ;;
     esac
 }
 
-main "$1"
+main "$@"
