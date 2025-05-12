@@ -1,6 +1,9 @@
+root(){
+    openssl req -x509 -new -nodes -subj "/C=US/ST=Texas/L=Austin/CN=*.jbernh.xyz" -addext "subjectAltName = DNS:*.jbernh.xyz" -key $ROOTKEY -sha256 -days 3650 -out root.crt
+}
+
 server(){
     # openssl genrsa -out root.key 2048
-    openssl req -x509 -new -nodes -subj "/C=US/ST=Texas/L=Austin/CN=*.dev-tools.svc.cluster.local" -addext "subjectAltName = DNS:*.dev-tools.svc.cluster.local" -key $ROOTKEY -sha256 -days 3650 -out root.crt
     openssl genrsa -out server.key 2048
     openssl req -new -subj "/C=US/ST=Texas/L=Austin/CN=jbernh.xyz" -addext "subjectAltName = DNS:*.jbernh.xyz, DNS:jbernh.xyz" -key server.key -out server.csr
     openssl x509 -req -in server.csr -CA root.crt -CAkey $ROOTKEY -CAcreateserial -copy_extensions=copy -days 3650 -out server.crt
@@ -19,11 +22,12 @@ internal(){
 }
 
 main() {
-    case "$1" in
-        "server")
+    local command="$1"
+    case "$command" in
+        server)
             server
             ;;
-        "internal")
+        internal)
             internal
             ;;
         *)
@@ -33,4 +37,4 @@ main() {
     esac
 }
 
-main "$1"
+main "$@"
