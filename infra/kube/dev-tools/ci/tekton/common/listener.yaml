@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: webhook-listener
+spec:
+  serviceAccountName: tekton-triggers-account
+  triggers:
+  - name: mana-trigger
+    template:
+      ref: mana-ci-template

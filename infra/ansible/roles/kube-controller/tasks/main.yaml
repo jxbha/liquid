@@ -42,3 +42,14 @@
     KUBECONFIG: /etc/kubernetes/admin.conf
   ansible.builtin.command: kubectl apply -f /tmp/calico.yaml
   changed_when: true
+- name: Copy custom CoreDNS
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/srv/coredns.yaml"
+    dest: /tmp/coredns.yaml
+    owner: gh0st
+    group: gh0st
+    mode: '0644'
+- name: Apply custom CoreDNS
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf
+  ansible.builtin.command: kubectl apply -f /tmp/coredns.yaml

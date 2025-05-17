@@ -1,0 +1,17 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: git-clone
+  namespace: dev-tools
+spec:
+  params:
+  - name: gitrepo
+    type: string
+  steps:
+    - name: clone
+      image: registry.dev-tools.svc.cluster.local:5000/git:v2.47.2
+      workingDir: $(workspaces.source.path)
+      script: |
+        git clone "$(params.gitrepo)"
+  workspaces:
+    - name: source

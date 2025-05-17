@@ -1,0 +1,46 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: mana-ci-pipeline
+  namespace: dev-tools
+spec:
+  params:
+  - name: gitrepo
+    default: http://gitea-http.dev-tools.svc.cluster.local:3000/jack/mana.git
+  - name: registry
+    default: registry.dev-tools.svc.cluster.local:5000
+  workspaces:
+  - name: source
+  tasks:
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      params:
+      - name: gitrepo
+        value: $(params.gitrepo)
+      workspaces:
+      - name: source 
+        workspace: source
+    - name: go-build-test
+      taskRef:
+        name: go-build-test
+      workspaces:
+      - name: source 
+        workspace: source
+      runAfter:
+        - git-clone
+    - name: image-build-push
+      taskRef:
+        name: image-build-push
+      params:
+      - name: registry
+        value: $(params.registry)
+      workspaces:
+      - name: source 
+      runAfter:
+        - go-build-test
+    - name: deploy
+      taskRef:
+        name: deploy
+      runAfter:
+      - image-build-push

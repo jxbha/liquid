@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy
+spec:
+  steps:
+    - name:
+      image: registry.dev-tools.svc.cluster.local:5000/kubectl:1.33
+      script:
+        kubectl rollout restart deploy/mana -n app

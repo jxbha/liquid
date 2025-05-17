@@ -1,18 +1,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: init-table
+  name: init-dbs
 spec:
   template:
     spec:
       containers:
-      - name: init-gitea
-        image: registry.dev-tools.svc.cluster.local:5000/postgres:latest
+      - name: init-dbs
+        image: registry.dev-tools.svc.cluster.local:5000/postgres:17
         command: ["sh",  "-c"]
         args:
           - |
             psql -h db.dev-tools.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB <<EOF
-            CREATE DATABASE $DRONE_DB;
             CREATE USER $GITEA_USER WITH PASSWORD '$GITEA_PASSWORD';
             CREATE DATABASE $GITEA_DB OWNER $GITEA_USER;
             EOF
@@ -32,11 +31,6 @@ spec:
               secretKeyRef:
                 name: db-secret
                 key: POSTGRES_DB
-          - name: DRONE_DB
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: DRONE_DB
           - name: GITEA_USER
             valueFrom:
               secretKeyRef:
@@ -54,4 +48,4 @@ spec:
                 key: GITEA_DB
       restartPolicy: Never
   backoffLimit: 0
-  ttlSecondsAfterFinished: 60
+  #ttlSecondsAfterFinished: 60

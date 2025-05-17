@@ -33,9 +33,18 @@ spec:
         secret:
           secretName: ssl-internal
           defaultMode: 0600
+      initContainers:
+      - name: fix-permissions
+        image: registry.dev-tools.svc.cluster.local:5000/busybox:1.37.0
+        command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data && chmod -R 0700 /var/lib/postgresql/data"]
+        volumeMounts:
+        - name: data-mana
+          mountPath: /var/lib/postgresql/data
+        securityContext:
+          runAsUser: 0 
       containers:
       - name: db
-        image: registry.dev-tools.svc.cluster.local:5000/postgres:latest
+        image: registry.dev-tools.svc.cluster.local:5000/postgres:17
         imagePullPolicy: IfNotPresent
         args:
          - -c
