@@ -1,0 +1,6 @@
+resources:
+  - local-path-storage.yaml
+  - registry/
+  - mana/
+  - tools/
+  - gitea/

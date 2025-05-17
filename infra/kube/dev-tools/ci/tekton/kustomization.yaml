@@ -1,0 +1,5 @@
+resources:
+    - tasks/
+    - pipelines/mana/
+    - triggers/
+    - secrets/mana/secret.yaml

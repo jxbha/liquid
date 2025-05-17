@@ -9,7 +9,7 @@ fi
 ssh "$HOST" <<'EOF'
 set -e
 LIQUID_DIR="/opt/liquid"
-DIRS=("data-mana" "data-tools")
+DIRS=("data-mana" "data-tools", "ci/data-mana-ci")
 
 for dir in "${DIRS[@]}"; do
     fullpath="$LIQUID_DIR/$dir"

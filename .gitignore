@@ -24,3 +24,4 @@ kconfig
 *.crt
 *.csr
 *.key
+*.srl

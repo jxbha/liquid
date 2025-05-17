@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: gitea-listener
+spec:
+  serviceAccountName: tekton-triggers-mana-sa
+  triggers:
+  - name: mana-trigger
+    template:
+      ref: mana-ci-template

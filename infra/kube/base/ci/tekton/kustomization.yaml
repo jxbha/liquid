@@ -1,0 +1,5 @@
+resources:
+  - tekton-dashboard.yaml
+  - tekton-pipeline.yaml
+  - tekton-interceptors.yaml
+  - tekton-triggers.yaml

@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: drone-ingress
+  namespace: dev-tools
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - drone.jbernh.xyz
+    secretName: ssl-server
+  rules:
+  - host: drone.jbernh.xyz
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: drone
+            port:
+              number: 80

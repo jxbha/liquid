@@ -10,7 +10,7 @@ usage(){
 Usage: $0 <command> [options]
 
 Available options:
-    help             You are here."
+    help             You are here.
     minikube         Runs the minikube bootstrapper. Minikube must be running (for now.)
     k3d              Runs the k3d bootstrapper. This may be deprecated in the future.
     decrypt          Decrypts all secrets in the project.

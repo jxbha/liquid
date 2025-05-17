@@ -17,6 +17,8 @@ images=(
     "golang:1.23"
     "alpine:3.20"
     "buildkit:v0.21.1-rootless"
+    "git:v2.47.2"
+    "busybox:1.37.0"
 )
 
 fwd(){

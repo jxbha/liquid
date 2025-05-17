@@ -1,0 +1,14 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: deploy
+spec:
+  params:
+  - name: kubeconfig
+    type: string
+  steps:
+    - name:
+      image: registry.dev-tools.svc.cluster.local:5000/kubectl:1.33
+      script:
+         echo "$KUBECONFIG" | base64 -d > $HOME/.kube/config
+         kubectl rollout restart deploy/mana

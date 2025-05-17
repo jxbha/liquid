@@ -1,0 +1,5 @@
+resources:
+  - git-clone.yaml
+  - go-build-test.yaml
+  - image-build-push.yaml
+  - deploy.yaml

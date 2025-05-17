@@ -6,7 +6,9 @@ metadata:
 spec:
   containers:
   - name: helper
-    image: registry.dev-tools.svc.cluster.local:5000/helper:3
+    image: registry.dev-tools.svc.cluster.local:5000/helper:4
+    securityContext:
+      privileged: true
     command:
     - tail
     - -f

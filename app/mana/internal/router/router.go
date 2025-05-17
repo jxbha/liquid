@@ -1,7 +1,6 @@
 package router
 
 import (
-	_ "jbernh/mana/internal/handler"
 	handler "jbernh/mana/internal/handler"
 	"net/http"
 )

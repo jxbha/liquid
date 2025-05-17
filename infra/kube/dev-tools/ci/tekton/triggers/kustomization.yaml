@@ -1,0 +1,5 @@
+resources:
+  - serviceaccount.yaml
+  - listener.yaml
+  #- binding.yaml
+  - template.yaml

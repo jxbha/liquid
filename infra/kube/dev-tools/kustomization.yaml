@@ -1,4 +1,5 @@
 resources:
+  - db/
   - registry/
   - gitea/
-  - db/
+  - ci/tekton/

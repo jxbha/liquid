@@ -1,0 +1,46 @@
+kind: pipeline
+type: kubernetes
+name: default
+
+clone:
+  disable: true
+
+steps:
+- name: clone
+  image: alpine/git
+  commands:
+  - git clone http://gitea-http.dev-tools.svc.cluster.local:3000/jack/mana.git
+
+- name: mana
+  image: registry.dev-tools.svc.cluster.local:5000/helper:4
+  pull: always
+  commands:
+  - go version
+  - cd mana
+  - go test ./cmd
+  - go build -o mana ./cmd
+
+- name: registry
+  image: registry.dev-tools.svc.cluster.local:5000/buildkit:rootless
+  environment:
+    BUILDKIT_HOST: unix:///tmp/buildkitd.sock
+  commands:
+  - cd mana
+  - SHA=${DRONE_COMMIT_SHA:0:8}
+  - echo Setting new 'tag:' $SHA
+  - echo 'WARNING:' NOT USING NEW TAG UNTIL CD IS IMPLEMENTED. Defaulting to latest...
+  - buildctl-daemonless.sh build \
+    --frontend=dockerfile.v0 \
+    --local context=. \
+    --local dockerfile=. \
+    --oci-worker-no-process-sandbox \
+    --output type=image,name=registry.dev-tools.svc.cluster.local:5000/mana:latest,push=true 
+
+- name: deploy
+  image: registry.dev-tools.svc.cluster.local:5000/kubectl:1.33
+  environment:
+    KUBECONFIG:
+      from_secret: KUBECONFIG
+  commands:
+  - echo "$KUBECONFIG" | base64 -d > $HOME/.kube/config
+  - kubectl rollout restart deploy/mana

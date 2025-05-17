@@ -1,4 +1,7 @@
 resources:
   - network/
-  - volumes/
+  - storage/
   - secrets/
+  - rbac/
+  - resources/metrics-server.yaml
+  - ci/tekton/

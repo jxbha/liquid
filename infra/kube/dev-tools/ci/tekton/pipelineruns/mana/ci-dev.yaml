@@ -1,0 +1,10 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  name: mana-ci-run
+  namespace: dev-tools
+spec:
+  workspaces:
+  - name: source
+  pipelineRef:
+    name: mana-ci-pipeline
