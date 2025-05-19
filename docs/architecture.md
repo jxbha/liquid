@@ -6,6 +6,14 @@
 
 ---
 
+
+## Hardware
+
+- Server: Lenovo ThinkCentre M910Q
+- CPU: 8 x Intel(R) Core(TM) i7-6700T CPU @ 2.80GHz (1 Socket)
+- RAM: 32GB
+- Storage: Kingston 1TB SSD
+
 ## Stack Breakdown
 
 | Layer            | Tool             | Purpose                                                                        |
