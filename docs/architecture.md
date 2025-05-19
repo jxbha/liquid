@@ -16,15 +16,24 @@
 | Configuration    | Ansible          | Post-provision VM setup and service configuration                              |
 | Orchestration    | kubeadm          | Bootstraps and manages the Kubernetes cluster                                  |
 
----
+## Dependencies
+
+* **kubernetes (1.32.2)**:
+* **OpenTofu (1.9)**:
+* **ansible (2.16)**:
+
+        ansible-galaxy collection install community.general
+        ansible-galaxy collection install ansible.posix
+
 
 ## Repository Layout
 
 ```bash
 liquid/
-├── app/          # Target application (DIY sockshop for CI/CD)
+├── app/          # Target application (little DIY "production" app)
 ├── bin/          # Helper scripts (image building, secret management, etc.)
 ├── infra/        # Infrastructure and platform layer: packer config, terraform, ansible, and kubernetes manifests
 ├── docs/         # Documentation and architecture notes
 ├── .env.template # Environment file template to be copied and filled; a lot of this will be replaced with secrets management
 └── README.md     # Project entrypoint
+```

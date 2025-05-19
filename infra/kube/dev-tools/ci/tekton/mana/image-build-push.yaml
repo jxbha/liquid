@@ -1,0 +1,39 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: image-build-push
+spec:
+  params:
+  - name: registry
+  steps:
+    - name:
+      image: registry.dev-tools.svc.cluster.local:5000/buildkit:v0.21.1-rootless
+      workingDir: $(workspaces.source.path)/mana
+      env:
+        - name: BUILDKITD_FLAGS
+          value: "--config=/etc/buildkit/config/buildkitd.toml --oci-worker-no-process-sandbox"
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        appArmorProfile:
+          type: Unconfined
+      script: |
+        #!/bin/sh
+        echo Setting new 'tag: latest'
+        echo 'WARNING:' NOT USING NEW TAG UNTIL CD IS IMPLEMENTED. Defaulting to latest...
+
+        buildctl-daemonless.sh \
+          build \
+          --frontend=dockerfile.v0 \
+          --local context=. \
+          --local dockerfile=. \
+          --output type=image,name=$(params.registry)/mana:latest,push=true 
+      volumeMounts:
+        - name: buildkit-config
+          mountPath: /etc/buildkit/config
+  workspaces:
+    - name: source
+  volumes:
+    - name: buildkit-config
+      configMap:
+        name: buildkit-config

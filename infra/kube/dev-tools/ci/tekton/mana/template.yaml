@@ -1,0 +1,30 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: mana-ci-template
+spec:
+  params:
+  - name: gitrepo
+  - name: registry
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: mana-ci-run-
+    spec:
+      serviceAccountName: pipeline-account
+      workspaces:
+      - name: source
+        volumeClaimTemplate:
+          metadata:
+            labels:
+              purpose: mana-ci
+          spec:
+            storageClassName: local-path
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 100Mi 
+      pipelineRef:
+        name: mana-ci-pipeline

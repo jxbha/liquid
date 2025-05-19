@@ -24,3 +24,12 @@ kconfig
 *.crt
 *.csr
 *.key
+*.srl
+
+infra/kube/vendor/*
+!infra/kube/vendor/versions.txt
+!infra/kube/vendor/kustomization.yaml
+
+
+app/mana/vendor/*
+!app/mana/vendor/modules.txt
