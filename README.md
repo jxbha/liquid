@@ -3,7 +3,7 @@ liquid
 
 A Homelab, hopefully eventually entirely encapsulated in code, using modern practices.
 
-see [architecture](./blob/main/docs/architecture.md) for more information.
+see [architecture](./docs/architecture.md) for more information.
 
 ## Current Status / Roadmap
 
@@ -36,14 +36,6 @@ Coming soon.
 - **Container Orchestration**: Kubernetes ([kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/))
 - **CI/CD**: Gitea + Tekton (in progress)
 - **GitOps**: ArgoCD (soon)
-
-
-## Hardware
-
-- Server: Lenovo ThinkCentre M910Q
-- CPU: 8 x Intel(R) Core(TM) i7-6700T CPU @ 2.80GHz (1 Socket)
-- RAM: 32GB
-- Storage: Kingston 1TB SSD
 
 ---
 
