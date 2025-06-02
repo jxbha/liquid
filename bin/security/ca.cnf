@@ -1,0 +1,45 @@
+# Basic configuration for x509 CA and certificates.
+# Base config found at /etc/ssl/openssl.cnf , which can be found with $ openssl version -d
+# EXAMPLE: https://www.phildev.net/ssl/opensslconf.html
+# SHORT NAMES: https://datatracker.ietf.org/doc/html/rfc4514.html
+#
+# We currently have one additional section per cert
+# check selfsign.sh utility for usage of various sections
+
+[ req ]
+default_bits = 4096
+default_keyfile = $ENV::CA_KEY_FILE
+distinguished_name = req_distinguished_name
+default_md = sha256
+x509_extensions	= v3_ca	
+string_mask = utf8only
+
+[ req_distinguished_name ]
+countryName = Country Name (2 letter code)
+countryName_default = US
+stateOrProvinceName = State or Province Name
+stateOrProvinceName_default = TX
+localityName = City
+localityName_default = Austin
+organizationName = Organization Name
+organizationName_default = Cathedral
+commonName = Common Name
+commonName_default = Liquid Root CA
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+keyUsage = critical, cRLSign, keyCertSign
+basicConstraints = critical, CA:TRUE
+
+[ external_cert ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectKeyIdentifier = hash
+subjectAltName = DNS:*.jbernh.xyz, DNS:jbernh.xyz
+
+[ internal_cert ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectKeyIdentifier = hash
+subjectAltName = DNS:*.dev-tools.svc.cluster.local

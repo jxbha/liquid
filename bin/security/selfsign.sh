@@ -1,29 +1,106 @@
+#!/usr/bin/env bash
+
+DIR="$(dirname "$0")"
+CACRT="ca.crt"
+CONFIG="$DIR/ca.cnf"
+
+keycheck(){
+    # checks for the CA private key. 
+    # if the env var doesn't exist, there's a workspace problem: run envsetup again.
+    # if the file doesn't exist, create it!
+   
+    if [[ -z "$CA_KEY_FILE" ]]; then
+        # Under DEVSPACE conditions from envsetup, this should be set.
+        echo "Private key file path not loaded. Double-check workspace and env file."
+        exit 1
+    fi
+
+    if [[ -f "$CA_KEY_FILE" ]]; then
+        return
+    fi
+
+    openssl genrsa -out "$CA_KEY_FILE" 4096
+    chmod 600 "$CA_KEY_FILE"
+}
+
 root(){
-    openssl req -x509 -new -nodes -subj "/C=US/ST=Texas/L=Austin/CN=*.jbernh.xyz" -addext "subjectAltName = DNS:*.jbernh.xyz" -key $ROOTKEY -sha256 -days 3650 -out root.crt
+    openssl req -x509 -new -noenc -batch \
+        -config $CONFIG \
+        -sha256 -days 3650 \
+        -out $CACRT
 }
 
 server(){
-    # openssl genrsa -out root.key 2048
-    openssl genrsa -out server.key 2048
-    openssl req -new -subj "/C=US/ST=Texas/L=Austin/CN=jbernh.xyz" -addext "subjectAltName = DNS:*.jbernh.xyz, DNS:jbernh.xyz" -key server.key -out server.csr
-    openssl x509 -req -in server.csr -CA root.crt -CAkey $ROOTKEY -CAcreateserial -copy_extensions=copy -days 3650 -out server.crt
-    openssl verify -CAfile root.crt server.crt
-    kubectl create secret tls secret-server --cert=server.crt --key=server.key -n dev-tools --dry-run=client -o yaml > server-secret.yaml
+    # Generate key
+    openssl genrsa -out server.key 4096
+
+    # Generate CSR
+    openssl req -new \
+        -subj "/C=US/ST=TX/L=Austin/O=Cathedral/CN=*.jbernh.xyz" \
+        -config "$CONFIG" -reqexts external_cert \
+        -key server.key \
+        -out server.csr
+
+    # Sign CSR
+    openssl x509 -req -in server.csr \
+        -CA "$CACRT" -CAkey "$CA_KEY_FILE" \
+        -copy_extensions copy -days 365 \
+        -out server.crt
+
+    # Verify cert
+    openssl verify -CAfile "$CACRT" server.crt
+
+    # Create secret
+    kubectl create secret tls tls-server \
+        --cert=server.crt --key=server.key \
+        --namespace dev-tools \
+        --dry-run=client \
+        --output yaml > tls-server-secret.yaml
+
+    # Clean up
     rm server.csr server.crt server.key
 }
 
 internal(){
-    openssl genrsa -out internal.key 2048
-    openssl req -new -subj "/C=US/ST=Texas/L=Austin/CN=*.dev-tools.svc.cluster.local" -addext "subjectAltName = DNS:*.dev-tools.svc.cluster.local" -key internal.key -out internal.csr
-    openssl x509 -req -in internal.csr -CA root.crt -CAkey $ROOTKEY -CAcreateserial -copy_extensions=copy -days 3650 -out internal.crt
-    openssl verify -CAfile root.crt internal.crt
-    kubectl create secret tls secret-internal --cert=internal.crt --key=internal.key -n dev-tools --dry-run=client -o yaml > internal-secret.yaml
+    # Generate key
+    openssl genrsa -out internal.key 4096
+
+    # Generate CSR
+    openssl req -new \
+        -subj "/C=US/ST=TX/L=Austin/O=Cathedral/CN=*.dev-tools.svc.cluster.local" \
+        -config "$CONFIG" -reqexts internal_cert \
+        -key internal.key \
+        -out internal.csr
+
+    # Sign CSR
+    openssl x509 -req -in internal.csr \
+        -CA "$CACRT" -CAkey "$CA_KEY_FILE" \
+        -copy_extensions copy -days 365 \
+        -out internal.crt
+
+    # Verify cert
+    openssl verify -CAfile "$CACRT" internal.crt
+
+    # Create secret
+    kubectl create secret tls tls-internal \
+        --cert=internal.crt --key=internal.key \
+        --namespace dev-tools \
+        --dry-run=client \
+        --output yaml > tls-internal-secret.yaml
+
+    # Clean up
     rm internal.csr internal.crt internal.key
 }
 
 main() {
     local command="$1"
+
+    keycheck
+
     case "$command" in
+        root)
+            root
+            ;;
         server)
             server
             ;;
