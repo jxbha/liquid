@@ -1,0 +1,9 @@
+docker.io/library/postgres:17
+docker.io/bitnami/kubectl:1.33
+docker.io/library/golang:1.23
+docker.io/library/alpine:3.20
+docker.io/moby/buildkit:v0.21.1-rootless
+docker.io/alpine/git:v2.47.2
+docker.io/library/busybox:1.37.0
+localhost/mana:latest
+localhost/helper:4

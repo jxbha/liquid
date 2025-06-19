@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 DIR="$(dirname "$0")"
-CACRT="ca.crt"
-CONFIG="$DIR/ca.cnf"
+CACRT="$ROOT/config/ssl/ca.crt"
+CONFIG="$ROOT/config/ssl/ca.cnf"
 
 keycheck(){
     # checks for the CA private key. 
@@ -24,11 +24,23 @@ keycheck(){
 }
 
 root(){
-    openssl req -x509 -new -noenc -batch \
-        -config $CONFIG \
-        -sha256 -days 3650 \
-        -out $CACRT
-}
+    if [[ ! -f "$CACRT" ]]; then
+        openssl req -x509 -new -noenc -batch \
+            -config "$CONFIG" \
+            -sha256 -days 3650 \
+            -out "$CACRT"
+    fi
+    
+    kubectl create secret generic tls-ca \
+    --from-file=ca.crt="$CACRT" \
+    --namespace dev-tools \
+    --dry-run=client \
+    --output yaml > tls-ca-secret.yaml
+    
+    kubectl apply -f tls-ca-secret.yaml
+    
+    mv tls-ca-secret.yaml $ROOT/infra/kube/base/secrets/tls/ca/secret.yaml
+} 
 
 server(){
     # Generate key
@@ -54,8 +66,10 @@ server(){
     kubectl create secret tls tls-server \
         --cert=server.crt --key=server.key \
         --namespace dev-tools \
-        --dry-run=client \
-        --output yaml > tls-server-secret.yaml
+
+    kubectl create secret tls tls-server \
+        --cert=server.crt --key=server.key \
+        --namespace app \
 
     # Clean up
     rm server.csr server.crt server.key
@@ -85,8 +99,10 @@ internal(){
     kubectl create secret tls tls-internal \
         --cert=internal.crt --key=internal.key \
         --namespace dev-tools \
-        --dry-run=client \
-        --output yaml > tls-internal-secret.yaml
+
+    kubectl create secret tls tls-internal \
+        --cert=internal.crt --key=internal.key \
+        --namespace app \
 
     # Clean up
     rm internal.csr internal.crt internal.key

@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/usr/bin/env bash
 # working subshell, similar to python's venv
 
 export ROOT=$(pwd)
@@ -19,6 +19,7 @@ extras() {
     link_env
     proxmox
 }
+
 
 # base project env
 (
