@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Bootstraps the cluster registry during a kube port-forward
 #
@@ -8,18 +8,7 @@
 set -e
 
 KPORT="localhost:5000"
-images=(
-    "helper:4"
-    "mana:latest"
-    "helper:4"
-    "postgres:17"
-    "kubectl:1.33"
-    "golang:1.23"
-    "alpine:3.20"
-    "buildkit:v0.21.1-rootless"
-    "git:v2.47.2"
-    "busybox:1.37.0"
-)
+images="$ROOT/infra/kube/containers/versions.txt"
 
 fwd(){
     kubectl port-forward svc/registry 5000:5000 &
@@ -34,15 +23,17 @@ clean(){
 trap clean EXIT
 
 tag(){
-    for image in "${images[@]}"; do
+    while read -r record; do
+        image=$(basename $record)
         podman tag localhost/$image $KPORT/$image
-    done
+    done < $images
 }
 
 push(){
-    for image in "${images[@]}"; do
+    while read -r record; do
+        image=$(basename $record)
         podman push --tls-verify=false $KPORT/$image
-    done
+    done < $images
 }
 
 main(){

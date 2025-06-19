@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # `cat` here helps with terminal rendering
 kubectl exec -it pods/helper -- curl -s \
