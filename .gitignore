@@ -26,9 +26,10 @@ kconfig
 *.key
 *.srl
 
-infra/kube/vendor/*
-!infra/kube/vendor/versions.txt
-!infra/kube/vendor/kustomization.yaml
+infra/kube/vendor/common/*.yaml
+!infra/kube/vendor/common/kustomization.yaml
+infra/kube/vendor/networking/*.yaml
+!infra/kube/vendor/networking/kustomization.yaml
 
 
 app/mana/vendor/*
