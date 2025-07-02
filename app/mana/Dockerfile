@@ -1,4 +1,5 @@
-FROM registry.dev-tools.svc.cluster.local:5000/alpine:3.20
+ARG REGISTRY
+FROM "$REGISTRY"/alpine:3.20
 WORKDIR /app
 COPY mana .
 EXPOSE 4040

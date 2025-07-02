@@ -38,8 +38,6 @@ root(){
     --output yaml > tls-ca-secret.yaml
     
     kubectl apply -f tls-ca-secret.yaml
-    
-    mv tls-ca-secret.yaml $ROOT/infra/kube/base/secrets/tls/ca/secret.yaml
 } 
 
 server(){

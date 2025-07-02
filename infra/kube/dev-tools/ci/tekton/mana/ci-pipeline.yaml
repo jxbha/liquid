@@ -5,10 +5,11 @@ metadata:
   namespace: dev-tools
 spec:
   params:
-  - name: gitrepo
+  - name: repo
     default: http://gitea-http.dev-tools.svc.cluster.local:3000/jack/mana.git
   - name: registry
     default: registry.dev-tools.svc.cluster.local:5000
+  - name: short_sha
   workspaces:
   - name: source
   tasks:
@@ -16,8 +17,8 @@ spec:
       taskRef:
         name: git-clone
       params:
-      - name: gitrepo
-        value: $(params.gitrepo)
+      - name: repo
+        value: $(params.repo)
       workspaces:
       - name: source 
         workspace: source
@@ -35,6 +36,8 @@ spec:
       params:
       - name: registry
         value: $(params.registry)
+      - name: short_sha
+        value: $(params.short_sha)
       workspaces:
       - name: source 
       runAfter:
@@ -42,5 +45,10 @@ spec:
     - name: deploy
       taskRef:
         name: deploy
+      params:
+      - name: registry
+        value: $(params.registry)
+      - name: new_image
+        value: $(tasks.image-build-push.results.new_image)
       runAfter:
       - image-build-push

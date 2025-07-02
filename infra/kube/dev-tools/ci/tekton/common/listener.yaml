@@ -1,10 +1,27 @@
-apiVersion: triggers.tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: webhook-listener
 spec:
   serviceAccountName: tekton-triggers-account
   triggers:
-  - name: mana-trigger
-    template:
-      ref: mana-ci-template
+    - name: mana-trigger
+      interceptors:
+      - ref:
+          name: cel
+        params:
+        - name: filter
+          value: >
+            body.commits.exists(c,
+              c.added.exists(f, f.contains('app/mana')) ||
+              c.removed.exists(f, f.contains('app/mana')) ||
+              c.modified.exists(f, f.contains('app/mana'))
+            )
+        - name: overlays
+          value:
+            - key: short_sha
+              expression: "body.after.truncate(7)"
+      bindings:
+      - ref: mana-binding
+      template:
+        ref: mana-ci-tt

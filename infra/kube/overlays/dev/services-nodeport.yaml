@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    purpose: git
+  name: gitea
+spec:
+  ports:
+  - name: web
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+    nodePort: 30125
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+    nodePort: 30122
+  selector:
+    purpose: git
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tekton-dashboard
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/part-of: tekton-dashboard
+    app.kubernetes.io/version: v0.57.0
+    dashboard.tekton.dev/release: v0.57.0
+  name: tekton-dashboard
+spec:
+  ports:
+  - port: 9097
+    protocol: TCP
+    targetPort: 9097
+    nodePort: 30126
+  selector:
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/instance: default
+    app.kubernetes.io/name: dashboard
+    app.kubernetes.io/part-of: tekton-dashboard
+  type: NodePort
+ 

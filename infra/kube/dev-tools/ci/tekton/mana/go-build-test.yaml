@@ -6,8 +6,8 @@ metadata:
 spec:
   steps:
     - name: unit-test
-      image: registry.dev-tools.svc.cluster.local:5000/helper:4
-      workingDir: $(workspaces.source.path)/mana
+      image: registry.dev-tools.svc.cluster.local:5000/ci-golang:latest
+      workingDir: $(workspaces.source.path)/liquid/app/mana
       script: |
         mkdir -p $(workspaces.source.path)/gocache
         mkdir -p $(workspaces.source.path)/gomodcache
@@ -15,10 +15,11 @@ spec:
         export GOMODCACHE=$(workspaces.source.path)/gomodcache
 
         go version
+        go mod vendor
         go test ./cmd
     - name: build
-      image: registry.dev-tools.svc.cluster.local:5000/helper:4
-      workingDir: $(workspaces.source.path)/mana
+      image: registry.dev-tools.svc.cluster.local:5000/ci-golang:latest
+      workingDir: $(workspaces.source.path)/liquid/app/mana
       script: |
         export GOCACHE=$(workspaces.source.path)/gocache
         export GOMODCACHE=$(workspaces.source.path)/gomodcache
