@@ -1,0 +1,11 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: mana-binding
+  namespace: dev-tools
+spec: 
+  params:
+  - name: repo
+    value: $(body.repository.clone_url)
+  - name: short_sha
+    value: $(extensions.short_sha)

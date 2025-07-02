@@ -5,10 +5,13 @@ metadata:
 spec:
   params:
   - name: registry
+  - name: short_sha
+  results:
+  - name: new_image
   steps:
-    - name:
+    - name: build-and-push
       image: registry.dev-tools.svc.cluster.local:5000/buildkit:v0.21.1-rootless
-      workingDir: $(workspaces.source.path)/mana
+      workingDir: $(workspaces.source.path)/liquid/app/mana
       env:
         - name: BUILDKITD_FLAGS
           value: "--config=/etc/buildkit/config/buildkitd.toml --oci-worker-no-process-sandbox"
@@ -19,15 +22,17 @@ spec:
           type: Unconfined
       script: |
         #!/bin/sh
-        echo Setting new 'tag: latest'
-        echo 'WARNING:' NOT USING NEW TAG UNTIL CD IS IMPLEMENTED. Defaulting to latest...
+        echo Setting new 'tag: $(params.short_sha)'
+        new_image="$(params.registry)/mana:$(params.short_sha)"
 
         buildctl-daemonless.sh \
           build \
           --frontend=dockerfile.v0 \
           --local context=. \
           --local dockerfile=. \
-          --output type=image,name=$(params.registry)/mana:latest,push=true 
+          --output type=image,name=$new_image,push=true 
+          
+          echo $new_image | tee $(results.new_image.path)
       volumeMounts:
         - name: buildkit-config
           mountPath: /etc/buildkit/config

@@ -7,6 +7,7 @@ spec:
   containers:
   - name: helper
     image: registry.dev-tools.svc.cluster.local:5000/helper:4
+    imagePullPolicy: Always
     securityContext:
       privileged: true
     command:

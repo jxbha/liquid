@@ -3,8 +3,11 @@ kind: Task
 metadata:
   name: deploy
 spec:
+  params:
+  - name: new_image
+  - name: registry
   steps:
-    - name:
+    - name: deploy-mana
       image: registry.dev-tools.svc.cluster.local:5000/kubectl:1.33
       script:
-        kubectl rollout restart deploy/mana -n app
+        kubectl set image -n app deployment/mana mana=$(params.new_image)

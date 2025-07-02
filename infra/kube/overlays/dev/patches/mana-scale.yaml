@@ -1,0 +1,10 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mana
+  namespace: app
+  labels:
+    purpose: mana
+    app: mana
+spec:
+  replicas: 1

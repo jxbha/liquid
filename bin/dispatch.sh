@@ -44,13 +44,29 @@ main(){
                     $BIN/bootstrap/minikube.sh "$@"
                     ;;
                 k3d)
-                    $BIN/k3d/k3d_init.sh "$@"
+                    $BIN/bootstrap/k3d.sh "$@"
                     ;;
                 dev)
                     $BIN/bootstrap/dev.sh "$@"
                     ;;
                 *)
                     echo "Usage: $0 bootstrap { minikube|k3d|dev }"
+                    ;;
+            esac
+            ;;
+        init)
+            case "$subcommand" in
+                assets)
+                    $BIN/init/assets.sh "$@"
+                    ;;
+                registry)
+                    $BIN/init/registry.sh "$@"
+                    ;;
+                containers)
+                    $BIN/init/containers.sh "$@"
+                    ;;
+                *)
+                    echo "Usage: $0 init { assets|registry|containers }"
                     ;;
             esac
             ;;
@@ -63,23 +79,11 @@ main(){
         certs)
             $BIN/security/selfsign.sh "$@"
             ;;
-        registry)
-            $BIN/init/registry.sh "$@"
-            ;;
-        containers)
-            $BIN/init/containers.sh "$@"
-            ;;
-        assets)
-            $BIN/init/assets.sh "$@"
-            ;;
         images)
             $BIN/scripts/registry_list_images.sh "$@"
             ;;
         image)
             $BIN/scripts/registry_inspect_image.sh "$@"
-            ;;
-        resetvol)
-            $BIN/scripts/reset.sh
             ;;
         *)
             echo -e "[ERROR] Unknown command: $command\n"

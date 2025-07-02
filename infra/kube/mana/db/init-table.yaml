@@ -2,14 +2,25 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: init-table
+  namespace: app
 spec:
   template:
     spec:
       containers:
       - name: init-store
         image: postgres:16
-        command: ["sh",  "-c", "psql -h db.app.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DB -c \"CREATE TABLE $MANA_TABLE(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
+        command: ["sh",  "-c", "psql -h db.app.svc.cluster.local -U $PGUSER -d $PGDB -c \"CREATE TABLE $MANA_TABLE(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
         env:
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: POSTGRES_USER
+          - name: PGDB
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: POSTGRES_DB
           - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
@@ -20,5 +31,5 @@ spec:
               secretKeyRef:
                 name: db-secret
                 key: MANA_TABLE
-      restartPolicy: Never
+      restartPolicy: OnFailure
   backoffLimit: 4

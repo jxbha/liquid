@@ -1,0 +1,39 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: mana-ci-tt
+  namespace: dev-tools
+  labels:
+    app: pipeline
+spec:
+  params:
+  - name: repo
+  - name: short_sha
+  resourcetemplates:
+  - apiVersion: tekton.dev/v1beta1
+    kind: PipelineRun
+    metadata:
+      generateName: mana-ci-run-
+    spec:
+      serviceAccountName: pipeline-account
+      params:
+      - name: repo
+        value: $(tt.params.repo)
+      - name: short_sha
+        value: $(tt.params.short_sha)
+      workspaces:
+      - name: source
+        volumeClaimTemplate:
+          metadata:
+            labels:
+              purpose: mana-ci
+              app: pipeline
+          spec:
+            storageClassName: local-path
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 100Mi 
+      pipelineRef:
+        name: mana-ci-pipeline

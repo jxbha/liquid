@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: gitea-secret
+  namespace: dev-tools
+  labels:
+    purpose: git
+type: Opaque
+stringData:
+  DOMAIN: "192.168.122.18:30125"
+  SSH_DOMAIN: "192.168.122.18:30125"
+  ROOT_URL: "http://192.168.122.18:30125/"

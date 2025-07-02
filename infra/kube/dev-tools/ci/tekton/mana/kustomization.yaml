@@ -6,4 +6,5 @@ resources:
     - image-build-push.yaml
     - deploy.yaml
     - ci-pipeline.yaml
-    - template.yaml
+    - triggerbinding.yaml
+    - ci-tt.yaml
