@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kubetools
+spec:
+  template:
+    spec:
+      restartPolicy: Never 
+      volumes:
+      - name: root-ca
+        secret:
+          secretName: tls-ca
+      - name: buildkit-config
+        configMap:
+          name: buildkit-config
+      containers:
+      - name: kubetools
+        image: registry.dev-tools.svc.cluster.local:5000/buildkit:v0.21.1-rootless
+        env:
+        - name: REGISTRY
+          value: registry.dev-tools.svc.cluster.local:5000
+        - name: BUILDKITD_FLAGS
+          value: "--config=/etc/buildkit/config/buildkitd.toml --oci-worker-no-process-sandbox"
+        securityContext:
+          runAsUser: 1000
+          runAsGroup: 1000
+          appArmorProfile:
+            type: Unconfined
+        volumeMounts:
+        - name: root-ca
+          mountPath: /data/
+        - name: buildkit-config
+          mountPath: /etc/buildkit/config
+        command:           
+        - /bin/sh
+        - -c
+        - |
+          mkdir -p /tmp/build-context
+          cp /data/ca.crt /tmp/build-context/
+          image="$(REGISTRY)/kubetools:latest"
+
+          cat > /tmp/build-context/Dockerfile <<EOF
+          FROM "$(REGISTRY)"/alpine:3.20
+          COPY ca.crt /usr/local/share/ca-certificates/ca.crt
+          RUN apk add --no-cache  \
+              ca-certificates \
+              jq \
+              curl && \
+              curl -LO https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl && \
+              chmod +x kubectl && \
+              mv kubectl /usr/local/bin && \
+              update-ca-certificates && \
+              rm -rf /var/cache/apk/*
+          EOF
+        
+
+          buildctl-daemonless.sh build --frontend=dockerfile.v0 --local context=/tmp/build-context --local dockerfile=/tmp/build-context --output type=image,name=$image,push=true
+

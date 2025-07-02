@@ -12,7 +12,7 @@ see [architecture](./docs/architecture.md) for more information.
 - [x] Infrastructure as Code (Terraform/OpenTofu)
 - [x] Configuration as Code (Ansible)
 - [x] VM Image Management (Packer)
-- [ ] CI/CD Pipeline (in progress with Gitea + Tekton + ArgoCD)
+- [x] CI/CD Pipeline (in progress with Gitea + Tekton)
 - [ ] Kubernetes orchestration (In Progress with kubeadm + ArgoCD)
 - [ ] Monitoring and observability
 - [ ] Secret management
