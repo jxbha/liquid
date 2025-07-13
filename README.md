@@ -12,8 +12,8 @@ see [architecture](./docs/architecture.md) for more information.
 - [x] Infrastructure as Code (Terraform/OpenTofu)
 - [x] Configuration as Code (Ansible)
 - [x] VM Image Management (Packer)
-- [x] CI/CD Pipeline (in progress with Gitea + Tekton)
-- [ ] Kubernetes orchestration (In Progress with kubeadm + ArgoCD)
+- [x] CI/CD Pipeline (Gitea + Tekton)
+- [ ] Kubernetes orchestration (maybe)
 - [ ] Monitoring and observability
 - [ ] Secret management
 - [ ] Distributed storage
@@ -22,9 +22,7 @@ see [architecture](./docs/architecture.md) for more information.
 
 ## Quick Start
 
-This is in-progress. Currently, Packer and Tofu must be run separately. Tofu will run all Ansible code, generating the inventory file and bootstrapping the cluster with one controller and two workers. Eventually this will be extensible from Tofu - ansible is already extensible and will configure as many systems as are dynamically generated in the inventory by Tofu.
-
-Coming soon.
+This is in-progress. Currently, Packer and Tofu must be run separately. Packer creates images using Tofu will run all Ansible code, generating the inventory file and bootstrapping the cluster with one controller and two workers. 
 
 ## Tech Stack
 
@@ -34,8 +32,7 @@ Coming soon.
 - **Infrastructure**: [Terraform](https://www.terraform.io/) / [OpenTofu](https://opentofu.org/)
 - **Configuration**: [Ansible](https://docs.ansible.com/)
 - **Container Orchestration**: Kubernetes ([kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/))
-- **CI/CD**: Gitea + Tekton (in progress)
-- **GitOps**: ArgoCD (soon)
+- **CI/CD**: [Gitea](https://about.gitea.com/products/gitea/) + [Tekton](https://tekton.dev/)
 
 ---
 
@@ -45,6 +42,7 @@ Coming soon.
 liquid/
 ├── app/          # Target application
 ├── bin/          # Helper scripts
+├── config/       # Currently holds CA cert, SSL stuff
 ├── infra/        # Infrastructure code
 ├── docs/         # Documentation and architecture notes
 └── README.md     # You are here

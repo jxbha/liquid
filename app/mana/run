@@ -22,7 +22,14 @@ clean() {
     fi
 }
 
-trap clean EXIT
+#trap clean EXIT
+
+reset() {
+    CGO_ENABLED=0 go build -o mana ./cmd/
+    podman compose down
+    podman rmi localhost/mana_app
+    podman compose up -d
+}
 
 test() {
     env
@@ -39,6 +46,9 @@ case "$1" in
         ;;
     "clean")
         clean
+        ;;
+    "reset")
+        reset
         ;;
     *)
         test

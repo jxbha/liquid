@@ -1,15 +1,24 @@
 package handler
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"jbernh/mana/internal/database"
+	"jbernh/mana/internal/domain/pair"
+	"log"
 	"net/http"
 	"strconv"
 )
 
 type Handler struct {
-	db *database.Connection
+	repo Repository
+}
+
+type Repository interface {
+	List() ([]pair.Pair, error)
+	Get(id int) (*pair.Pair, error)
+	Create(p pair.Pair) (*pair.Pair, error)
 }
 
 type RequestHandler interface {
@@ -19,48 +28,68 @@ type RequestHandler interface {
 	CheckAlive(w http.ResponseWriter, r *http.Request)
 }
 
-func NewHandler(db *database.Connection) *Handler {
-	return &Handler{db: db}
+func NewHandler(repo Repository) *Handler {
+	return &Handler{repo: repo}
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Yes")
-}
+func Index(w http.ResponseWriter, r *http.Request) {}
 
 func (handler *Handler) List(w http.ResponseWriter, r *http.Request) {
-	result, _ := handler.db.List()
+	result, err := handler.repo.List()
+	if err != nil {
+		http.Error(w, err.Error(), 404)
+	}
 	for _, r := range result {
-		fmt.Fprintf(w, "ID: %d\t%s\t%s\n", r.Id, r.Key, r.Val)
+		fmt.Fprintf(w, "ID: %d\t%s\t%s\n", r.Id, r.Name, r.Val)
 	}
 }
 
 func (handler *Handler) Get(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil || id < 1 {
-		http.NotFound(w, r)
+		// w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, "Error: please provide a valid ID", http.StatusBadRequest)
 		return
 	}
 
-	result, err := handler.db.Get(id)
+	result, err := handler.repo.Get(id)
 	if err != nil {
-		http.Error(w, "ERROR:\tRecord not found", 500)
-		return
+		if errors.Is(err, sql.ErrNoRows) {
+			log.Printf("record not found: %v", err)
+			http.Error(w, "ERROR:\tRecord not found", 404)
+			return
+		} else {
+			log.Printf("database error: %v", err)
+			http.Error(w, "ERROR:\tInternal server error", 500)
+			return
+		}
 	}
-	fmt.Fprintf(w, "ID: %d\t%s\t%s\n", result.Id, result.Key, result.Val)
+	fmt.Fprintf(w, "ID: %d\t%s\t%s\n", result.Id, result.Name, result.Val)
 }
 
 func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	var p database.Pair
+	var p pair.Pair
 	err := json.NewDecoder(r.Body).Decode(&p)
-	if err != nil {
-		fmt.Fprint(w, http.StatusBadRequest)
+
+	// if err != nil || !p.IsValid() {
+	if err != nil || !p.IsValid() || strconv.Itoa(p.Id) != "0" { // this is the wrong way; we just need to check if exists and error
+		w.WriteHeader(http.StatusBadRequest)
+		http.Error(w, "error decoding JSON body; please provide only a `name` and a `val`", http.StatusBadRequest)
+		return
 	}
 
-	_, err = handler.db.Create(p)
+	result, err := handler.repo.Create(p)
 	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		w.Header().Add("Location", fmt.Sprintf("/pairs/%d", result.Id))
+		w.WriteHeader(http.StatusCreated)
+		err = json.NewEncoder(w).Encode(result)
+		return
 	}
-
 }
 
 func (handler *Handler) CheckAlive(w http.ResponseWriter, r *http.Request) {

@@ -2,54 +2,96 @@ package database
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
+	"jbernh/mana/internal/domain/pair"
 	"log/slog"
 	"os"
+	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-type Pair struct {
-	Id  int
-	Key string
-	Val string
-}
-
-type Connection struct {
+type PostgresRepository struct {
 	DB *sql.DB
 }
 
-func NewDB() (*Connection, error) {
-	DATABASE_UN := os.Getenv("DATABASE_UN")
-	DATABASE_PW := os.Getenv("DATABASE_PW")
-	DATABASE_HOST := os.Getenv("DATABASE_HOST")
-	URI := fmt.Sprintf("postgres://%v:%v@%v", DATABASE_UN, DATABASE_PW, DATABASE_HOST)
-
-	conn, err := sql.Open("pgx", URI)
-
-	if err != nil {
-		return nil, err
-	}
-
-	err = conn.Ping()
-	if err != nil {
-		return nil, err
-	}
-	return &Connection{DB: conn}, nil
+func NewPostgresRepository(db *sql.DB) *PostgresRepository {
+	return &PostgresRepository{DB: db}
 }
 
-func (conn *Connection) List() ([]Pair, error) {
-	pairs := []Pair{}
-	rows, err := conn.DB.Query("SELECT * FROM persist")
+type Config struct {
+	host     string
+	port     string
+	username string
+	password string
+	database string
+	sslmode  string
+	table    string
+}
+
+func (c *Config) ConnectionString() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
+		c.username, c.password, c.host, c.port, c.database, c.sslmode)
+}
+
+func LoadConfig() (*Config, error) {
+	cfg := &Config{
+		host:     getEnvOrDefault("POSTGRES_ADDR", "localhost"),
+		port:     getEnvOrDefault("POSTGRES_PORT", "5432"),
+		username: getEnvOrDefault("POSTGRES_USER", "mana"),
+		password: getEnvOrDefault("POSTGRES_PASSWORD", ""),
+		database: getEnvOrDefault("POSTGRES_DATABASE", "mana"),
+		sslmode:  getEnvOrDefault("SSL_MODE", "disable"),
+	}
+
+	if cfg.password == "" {
+		return nil, fmt.Errorf("error: password not provided")
+	}
+
+	return cfg, nil
+}
+
+func getEnvOrDefault(key, defaultValue string) string {
+	if os.Getenv(key) != "" {
+		return os.Getenv(key)
+	}
+
+	return defaultValue
+}
+
+func NewDB(cfg *Config) (*sql.DB, error) {
+	URI := cfg.ConnectionString()
+	db, err := sql.Open("pgx", URI)
+
+	if err == nil {
+		for i := 5; i > 0; i-- {
+			if err = db.Ping(); err == nil {
+				break
+			}
+			time.Sleep(5 * time.Second)
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
+		return db, nil
+	}
+
+	return nil, err
+}
+
+func (conn *PostgresRepository) List() ([]pair.Pair, error) {
+	pairs := []pair.Pair{}
+	rows, err := conn.DB.Query("SELECT * FROM pairs")
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
 	for rows.Next() {
-		var p Pair
-		rows.Scan(&p.Id, &p.Key, &p.Val)
+		var p pair.Pair
+		rows.Scan(&p.Id, &p.Name, &p.Val)
 
 		pairs = append(pairs, p)
 	}
@@ -57,25 +99,26 @@ func (conn *Connection) List() ([]Pair, error) {
 	return pairs, nil
 }
 
-func (conn *Connection) Get(id int) (Pair, error) {
-	stmt := `SELECT * FROM persist WHERE id = $1`
-	var p Pair
-	err := conn.DB.QueryRow(stmt, id).Scan(&p.Id, &p.Key, &p.Val)
+func (conn *PostgresRepository) Get(id int) (*pair.Pair, error) {
+	stmt := `SELECT * FROM pairs WHERE id = $1`
+	var p pair.Pair
+	err := conn.DB.QueryRow(stmt, id).Scan(&p.Id, &p.Name, &p.Val)
 	if err != nil {
-		return Pair{}, errors.New("Not found")
+		return nil, err
 	}
 
-	return p, nil
+	return &p, nil
 }
 
-func (conn *Connection) Create(p Pair) (int, error) {
-	stmt := `INSERT INTO persist (key, value) VALUES ($1, $2) RETURNING id`
+func (conn *PostgresRepository) Create(p pair.Pair) (*pair.Pair, error) {
+	stmt := `INSERT INTO pairs (name, value) VALUES ($1, $2) RETURNING id`
 	var id int
-	err := conn.DB.QueryRow(stmt, p.Key, p.Val).Scan(&id)
+	err := conn.DB.QueryRow(stmt, p.Name, p.Val).Scan(&id)
 	if err != nil {
 		slog.Error("insert failed", "error", err)
-		return -1, fmt.Errorf("Insert failed: %w", err)
+		return nil, fmt.Errorf("Insert failed: %w", err)
 	}
+	r := pair.NewPair(id, p.Name, p.Val)
 
-	return id, nil
+	return r, nil
 }

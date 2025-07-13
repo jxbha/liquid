@@ -9,13 +9,20 @@ import (
 )
 
 func main() {
-	db, err := database.NewDB()
+	fmt.Println("setting things up...")
+	cfg, err := database.LoadConfig()
+	if err != nil {
+		panic(err)
+	}
+	db, err := database.NewDB(cfg)
 	if err != nil {
 		fmt.Println(err)
+		panic(err)
 	}
-	defer db.DB.Close()
-	newHandler := handler.NewHandler(db)
-	var h handler.RequestHandler = newHandler
-
-	http.ListenAndServe(":4040", router.Routes(h))
+	defer db.Close()
+	pgrepo := database.NewPostgresRepository(db)
+	h := handler.NewHandler(pgrepo)
+	port := ":4040"
+	fmt.Printf("serving on port %s...", port)
+	http.ListenAndServe(port, router.Routes(h))
 }

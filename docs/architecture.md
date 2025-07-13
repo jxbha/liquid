@@ -2,7 +2,7 @@
 
 ## Overview
 
-**liquid** is a self-hosted infrastructure platform designed to automate the provisioning and configuration of a Kubernetes-based private environment. It leverages open-source tooling to manage VMs, images, packages, and workloads in a fully reproducible way.
+**liquid** is a self-hosted infrastructure platform designed to automate the provisioning and configuration of a Kubernetes-based private environment. It leverages open-source tooling to manage VMs, images, packages, and workloads in an (eventually) fully reproducible way.
 
 ---
 

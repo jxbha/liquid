@@ -1,0 +1,5 @@
+#!/bin/bash
+CGO_ENABLED=0 go build -o mana ./cmd/
+podman compose down
+podman rmi localhost/mana_app
+podman compose up -d
