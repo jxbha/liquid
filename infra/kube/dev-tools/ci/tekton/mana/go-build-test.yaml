@@ -3,6 +3,8 @@ kind: Task
 metadata:
   name: go-build-test
   namespace: dev-tools
+  labels:
+    app: pipeline
 spec:
   steps:
     - name: unit-test
@@ -15,14 +17,14 @@ spec:
         export GOMODCACHE=$(workspaces.source.path)/gomodcache
 
         go version
-        go mod vendor
-        go test ./cmd
+        #go mod vendor
+        go test -v ./...
     - name: build
       image: registry.dev-tools.svc.cluster.local:5000/ci-golang:latest
       workingDir: $(workspaces.source.path)/liquid/app/mana
       script: |
         export GOCACHE=$(workspaces.source.path)/gocache
         export GOMODCACHE=$(workspaces.source.path)/gomodcache
-        CGO_ENABLED=0 GOOS=linux go build -o mana ./cmd/
+        CGO_ENABLED=0 GOOS=linux go build -mod=vendor -o mana ./cmd/
   workspaces:
     - name: source

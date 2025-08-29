@@ -29,8 +29,5 @@ data:
     }
 kind: ConfigMap
 metadata:
-  creationTimestamp: "2025-03-30T03:42:48Z"
   name: coredns
   namespace: kube-system
-  resourceVersion: "4188680"
-  uid: c4b2d297-ad8e-46c3-afa4-bd37f75fa55d

@@ -15,12 +15,10 @@ Available options:
     decrypt            Decrypts all secrets in the project.
     encrypt            Encrypts all secrets in the project.
     certs              Create necessary self-signed certificates.
-    registry           Prepare registry with images from podman.
     containers         Pull all necessary container images
+    init               Initialize various assets.
     images             Check current images in cluster registry.
     image              Check tags for provided image.
-    assets             Downloads all third-party resources for Kubernetes.
-    resetvol           Resets directories for persistent volumes. Hacky but temporary.
 EOF
 }
 

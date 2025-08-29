@@ -4,6 +4,7 @@ metadata:
   labels:
     purpose: git
   name: gitea
+  namespace: dev-tools
 spec:
   ports:
   - name: web
@@ -32,6 +33,7 @@ metadata:
     app.kubernetes.io/version: v0.57.0
     dashboard.tekton.dev/release: v0.57.0
   name: tekton-dashboard
+  namespace: dev-tools
 spec:
   ports:
   - port: 9097
@@ -44,4 +46,71 @@ spec:
     app.kubernetes.io/name: dashboard
     app.kubernetes.io/part-of: tekton-dashboard
   type: NodePort
- 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: app
+  labels:
+    purpose: mana
+  name: mana-svc-np
+spec:
+  ports:
+  - port: 4040
+    protocol: TCP
+    targetPort: 4040
+    nodePort: 30127
+  selector:
+    purpose: mana
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: grafana
+  name: grafana-svc-np
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+    nodePort: 30128
+  selector:
+    app.kubernetes.io/name: grafana
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: prometheus
+  name: prometheus-svc-np
+spec:
+  ports:
+  - port: 9090
+    protocol: TCP
+    targetPort: 9090
+    nodePort: 30129
+  selector:
+    app.kubernetes.io/name: prometheus
+  type: NodePort
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  labels:
+    app.kubernetes.io/name: alertmanager
+  name: alertmanager-svc-np
+spec:
+  ports:
+  - port: 9093
+    protocol: TCP
+    targetPort: 9093
+    nodePort: 30130
+  selector:
+    app.kubernetes.io/name: alertmanager
+  type: NodePort

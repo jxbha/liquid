@@ -41,4 +41,4 @@ spec:
           claimName: data-registry
       - name: tls-cert
         secret:
-          secretName: ssl-internal
+          secretName: tls-internal

@@ -71,25 +71,21 @@ func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var p pair.Pair
 	err := json.NewDecoder(r.Body).Decode(&p)
 
-	// if err != nil || !p.IsValid() {
-	if err != nil || !p.IsValid() || strconv.Itoa(p.Id) != "0" { // this is the wrong way; we just need to check if exists and error
-		w.WriteHeader(http.StatusBadRequest)
+	if err != nil || !p.IsValid() {
 		http.Error(w, "error decoding JSON body; please provide only a `name` and a `val`", http.StatusBadRequest)
 		return
 	}
 
 	result, err := handler.repo.Create(p)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
-	} else {
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Location", fmt.Sprintf("/pairs/%d", result.Id))
-		w.WriteHeader(http.StatusCreated)
-		err = json.NewEncoder(w).Encode(result)
-		return
 	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Add("Location", fmt.Sprintf("/pairs/%d", result.Id))
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(result)
 }
 
 func (handler *Handler) CheckAlive(w http.ResponseWriter, r *http.Request) {

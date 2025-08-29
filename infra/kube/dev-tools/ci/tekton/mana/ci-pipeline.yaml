@@ -3,6 +3,8 @@ kind: Pipeline
 metadata:
   name: mana-ci-pipeline
   namespace: dev-tools
+  labels:
+    app: pipeline
 spec:
   params:
   - name: repo

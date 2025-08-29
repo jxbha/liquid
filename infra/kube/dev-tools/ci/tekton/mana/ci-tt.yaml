@@ -15,7 +15,7 @@ spec:
     metadata:
       generateName: mana-ci-run-
     spec:
-      serviceAccountName: pipeline-account
+      serviceAccountName: apps-deployer
       params:
       - name: repo
         value: $(tt.params.repo)

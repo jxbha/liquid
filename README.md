@@ -14,7 +14,7 @@ see [architecture](./docs/architecture.md) for more information.
 - [x] VM Image Management (Packer)
 - [x] CI/CD Pipeline (Gitea + Tekton)
 - [ ] Kubernetes orchestration (maybe)
-- [ ] Monitoring and observability
+- [x] Monitoring and observability
 - [ ] Secret management
 - [ ] Distributed storage
 - [ ] Backup and recovery

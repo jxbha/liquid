@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: buildkit-config
   namespace: dev-tools
+  labels:
+    app: pipeline
 data:
   buildkitd.toml: |
     [registry."registry.dev-tools.svc.cluster.local:5000"]

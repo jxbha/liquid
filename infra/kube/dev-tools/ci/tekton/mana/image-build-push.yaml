@@ -2,6 +2,8 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: image-build-push
+  labels:
+    app: pipeline
 spec:
   params:
   - name: registry
@@ -29,6 +31,7 @@ spec:
           build \
           --frontend=dockerfile.v0 \
           --local context=. \
+          --opt build-arg:REGISTRY=$(params.registry) \
           --local dockerfile=. \
           --output type=image,name=$new_image,push=true 
           

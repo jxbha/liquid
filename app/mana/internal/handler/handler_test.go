@@ -102,9 +102,9 @@ func TestCreate(t *testing.T) {
 		assertResponseString(t, data_got, data_want)
 	})
 
-	t.Run("provided id", func(t *testing.T) {
+	t.Run("missing name", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/create", nil)
-		req.Body = io.NopCloser(bytes.NewReader([]byte(`{"id": 55, "name": "mimicked", "val": "attempt"}`)))
+		req.Body = io.NopCloser(bytes.NewReader([]byte(`{"naame": "mimicked", "val": "attempt"}`)))
 		resp := httptest.NewRecorder()
 		router.Routes(handler).ServeHTTP(resp, req)
 
@@ -114,19 +114,7 @@ func TestCreate(t *testing.T) {
 		assertResponseCreate(t, status_got, status_want)
 	})
 
-	t.Run("bad name", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodPost, "/create", nil)
-		req.Body = io.NopCloser(bytes.NewReader([]byte(`does this even matter?`)))
-		resp := httptest.NewRecorder()
-		router.Routes(handler).ServeHTTP(resp, req)
-
-		// status code
-		status_got := resp.Code
-		status_want := http.StatusBadRequest
-		assertResponseCreate(t, status_got, status_want)
-	})
-
-	t.Run("bad val", func(t *testing.T) {
+	t.Run("missing val", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPost, "/create", nil)
 		req.Body = io.NopCloser(bytes.NewReader([]byte(`{"name": "mimicked", "vaal": "attempt"}`)))
 		resp := httptest.NewRecorder()
