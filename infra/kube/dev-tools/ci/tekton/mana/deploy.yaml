@@ -2,6 +2,8 @@ apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
   name: deploy
+  labels:
+    app: pipeline
 spec:
   params:
   - name: new_image

@@ -1,0 +1,15 @@
+grafana:
+  admin:
+    existingSecret: "monitoring-secret"
+    userKey: "admin-user"
+    passwordKey: "admin-password"
+  smtp:
+    enabled: false
+    existingSecret: "monitoring-secret"
+    passwordKey: "admin-password"
+    userKey: "admin-user"
+  grafana.ini:
+    smtp:
+      enabled: false
+      host: sandbox.smtp.mailtrap.io:587
+      from_address: alerts@example.com

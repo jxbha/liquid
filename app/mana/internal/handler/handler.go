@@ -18,7 +18,7 @@ type Handler struct {
 type Repository interface {
 	List() ([]pair.Pair, error)
 	Get(id int) (*pair.Pair, error)
-	Create(p pair.Pair) (int, error)
+	Create(p pair.Pair) (*pair.Pair, error)
 }
 
 type RequestHandler interface {
@@ -70,15 +70,22 @@ func (handler *Handler) Get(w http.ResponseWriter, r *http.Request) {
 func (handler *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var p pair.Pair
 	err := json.NewDecoder(r.Body).Decode(&p)
-	// if things are nil- problem
+
 	if err != nil || !p.IsValid() {
-		http.Error(w, "error decoding JSON body; please provide a `name` and a `val`", http.StatusBadRequest)
+		http.Error(w, "error decoding JSON body; please provide only a `name` and a `val`", http.StatusBadRequest)
+		return
 	}
 
-	_, err = handler.repo.Create(p)
+	result, err := handler.repo.Create(p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Add("Location", fmt.Sprintf("/pairs/%d", result.Id))
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(result)
 }
 
 func (handler *Handler) CheckAlive(w http.ResponseWriter, r *http.Request) {

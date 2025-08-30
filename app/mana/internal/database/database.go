@@ -110,14 +110,15 @@ func (conn *PostgresRepository) Get(id int) (*pair.Pair, error) {
 	return &p, nil
 }
 
-func (conn *PostgresRepository) Create(p pair.Pair) (int, error) {
+func (conn *PostgresRepository) Create(p pair.Pair) (*pair.Pair, error) {
 	stmt := `INSERT INTO pairs (name, value) VALUES ($1, $2) RETURNING id`
 	var id int
 	err := conn.DB.QueryRow(stmt, p.Name, p.Val).Scan(&id)
 	if err != nil {
 		slog.Error("insert failed", "error", err)
-		return -1, fmt.Errorf("Insert failed: %w", err)
+		return nil, fmt.Errorf("Insert failed: %w", err)
 	}
+	r := pair.NewPair(id, p.Name, p.Val)
 
-	return id, nil
+	return r, nil
 }

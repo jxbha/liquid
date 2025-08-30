@@ -31,7 +31,7 @@ spec:
           name: db-config
       - name: tls-cert
         secret:
-          secretName: ssl-internal
+          secretName: tls-internal
           defaultMode: 0600
       initContainers:
       - name: fix-permissions

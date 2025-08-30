@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: pipeline-cleanup
+  namespace: dev-tools
 spec:
   schedule: "*/30 * * * *"
   jobTemplate:
@@ -29,4 +30,3 @@ spec:
                   for i in $(kubectl get pipelineruns --no-headers --sort-by status.completionTime | awk '{ print $1 }' | head -n -3); do
                     kubectl delete pipelinerun $i
                   done || true
-          restartPolicy: Never

@@ -1,6 +1,5 @@
 package pair
 
-// should this really be here? should this be its own package / factory?
 type Pair struct {
 	Id   int
 	Name string
@@ -9,4 +8,8 @@ type Pair struct {
 
 func (p *Pair) IsValid() bool {
 	return p.Name != "" && p.Val != ""
+}
+
+func NewPair(id int, name, val string) *Pair {
+	return &Pair{Id: id, Name: name, Val: val}
 }

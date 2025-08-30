@@ -3,6 +3,8 @@ kind: TriggerBinding
 metadata:
   name: mana-binding
   namespace: dev-tools
+  labels:
+    app: pipeline
 spec: 
   params:
   - name: repo

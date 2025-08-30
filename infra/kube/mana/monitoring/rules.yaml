@@ -1,0 +1,22 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: mana-rules
+  namespace: monitoring
+  labels:
+    release: monitoring
+    role: mana-alerts
+spec:
+  groups:
+  - name: mana-health-checks
+    rules:
+    - alert: mana-start-failing
+      annotations:
+        description: mana is failing to start; check pods in namespace [app].
+        runbook_url: https://github.com/jxbha/liquid/blob/main/docs
+        summary: Mana is failing to start.
+      expr: increase(kube_pod_container_status_restarts_total{namespace="app", container="mana"}[10m]) > 2
+      labels:
+        severity: critical
+        namespace: monitoring
+

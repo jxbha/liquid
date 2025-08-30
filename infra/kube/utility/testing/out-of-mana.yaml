@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: out-of-mana
+  namespace: app
+  labels:
+    purpose: testing
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      purpose: testing
+  template:
+    metadata:
+      labels:
+        purpose: testing
+    spec:
+      volumes:
+      - name: logs-mana
+        persistentVolumeClaim:
+          claimName: logs-mana
+      containers:
+      - name: mana
+        image: registry.dev-tools.svc.cluster.local:5000/mana:latest
+        imagePullPolicy: Always
+        #envFrom: #  removing these lines, in order to fail the pod.
+        #- secretRef:
+        #    name: mana-secret
+        ports:
+        - containerPort: 4040
+        volumeMounts:
+        - name: logs-mana
+          mountPath: var/logs/mana

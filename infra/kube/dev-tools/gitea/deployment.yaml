@@ -22,7 +22,7 @@ spec:
       - name: gitea-secret
         secret:
           secretName: gitea-secret
-      - name: ssl-root
+      - name: tls-ca
         secret:
           secretName: tls-ca
       initContainers:

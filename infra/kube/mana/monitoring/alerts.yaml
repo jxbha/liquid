@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: AlertmanagerConfig
+metadata:
+  name: mana-alerts
+  namespace: monitoring
+spec:
+  route:
+    receiver: 'email-alerts'
+    groupWait: 30s
+    groupInterval: 5m
+    repeatInterval: 1h
+    matchers:
+    - name: alertname
+      matchType: "="
+      value: mana-start-failing
+  receivers:
+  - name: 'email-alerts'
+    emailConfigs:
+    - to: '0jack.bernhardt@gmail.com'
+      from: 'alerts@jbernh.xyz'
+      smarthost: 'smtp-relay.brevo.com:587'
+      authUsername: '950594001@smtp-brevo.com'
+      authPassword:
+        name: brevo-secret
+        key: password
+      text: |
+        Mana is failing to start.

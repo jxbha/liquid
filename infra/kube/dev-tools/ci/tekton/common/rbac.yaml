@@ -1,0 +1,72 @@
+# https://github.com/tektoncd/triggers/blob/release-v0.27.x/examples/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tekton-triggers-account
+  namespace: dev-tools
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: triggers-eventlistener-binding
+subjects:
+- kind: ServiceAccount
+  name: tekton-triggers-account
+  namespace: dev-tools
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-triggers-eventlistener-roles
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: triggers-eventlistener-clusterbinding
+subjects:
+- kind: ServiceAccount
+  name: tekton-triggers-account
+  namespace: dev-tools
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: tekton-triggers-eventlistener-clusterroles
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: apps-deployer
+  namespace: dev-tools
+
+---
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: apps-deployer-role
+  namespace: app
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["patch", "get"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: apps-deployer-rolebinding
+  namespace: app
+subjects:
+- kind: ServiceAccount
+  name: apps-deployer
+  namespace: dev-tools
+roleRef:
+  kind: Role
+  name: apps-deployer-role
+  apiGroup: rbac.authorization.k8s.io

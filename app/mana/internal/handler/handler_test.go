@@ -1,11 +1,14 @@
 package handler_test
 
 import (
+	"bytes"
 	"database/sql"
+	"encoding/json"
 	"fmt"
+	"io"
 	"jbernh/mana/internal/domain/pair"
-	handler "jbernh/mana/internal/handler"
-	router "jbernh/mana/internal/router"
+	"jbernh/mana/internal/handler"
+	"jbernh/mana/internal/router"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -22,24 +25,28 @@ func (rs *RepositoryStub) Get(id int) (*pair.Pair, error) {
 	}
 	return &pair.Pair{Id: 1, Name: "Distraught", Val: "Joy"}, nil
 }
-func (rs *RepositoryStub) Create(p pair.Pair) (int, error) {
-	return 1, nil
+func (rs *RepositoryStub) Create(p pair.Pair) (*pair.Pair, error) {
+	return &pair.Pair{Id: 1, Name: p.Name, Val: p.Val}, nil
 }
+
+func TestURL(t *testing.T) {}
 
 func TestGet(t *testing.T) {
 	rs := &RepositoryStub{}
-	resp := httptest.NewRecorder()
-	handler := handler.NewHandler(rs)
 	t.Run("valid ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/view/1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/pairs/1", nil)
+		resp := httptest.NewRecorder()
+		handler := handler.NewHandler(rs)
 		router.Routes(handler).ServeHTTP(resp, req)
 
 		got := resp.Body.String()
 		want := fmt.Sprintf("ID: %d\t%s\t%s\n", 1, "Distraught", "Joy")
-		assertResponseBody(t, got, want)
+		assertResponseString(t, got, want)
 	})
 	t.Run("negative ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/view/-1", nil)
+		req := httptest.NewRequest(http.MethodGet, "/pairs/-1", nil)
+		resp := httptest.NewRecorder()
+		handler := handler.NewHandler(rs)
 		router.Routes(handler).ServeHTTP(resp, req)
 
 		got := resp.Code
@@ -47,7 +54,9 @@ func TestGet(t *testing.T) {
 		assertResponseCode(t, got, want)
 	})
 	t.Run("non-numeric ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/view/INVALID", nil)
+		req := httptest.NewRequest(http.MethodGet, "/pairs/INVALID", nil)
+		resp := httptest.NewRecorder()
+		handler := handler.NewHandler(rs)
 		router.Routes(handler).ServeHTTP(resp, req)
 
 		got := resp.Code
@@ -55,7 +64,9 @@ func TestGet(t *testing.T) {
 		assertResponseCode(t, got, want)
 	})
 	t.Run("missing ID", func(t *testing.T) {
-		req := httptest.NewRequest(http.MethodGet, "/view/999", nil)
+		req := httptest.NewRequest(http.MethodGet, "/pairs/999", nil)
+		resp := httptest.NewRecorder()
+		handler := handler.NewHandler(rs)
 		router.Routes(handler).ServeHTTP(resp, req)
 
 		got := resp.Code
@@ -64,12 +75,69 @@ func TestGet(t *testing.T) {
 	})
 }
 
-func TestCreate(t *testing.T) {}
+func TestCreate(t *testing.T) {
+	rs := &RepositoryStub{}
+	handler := handler.NewHandler(rs)
+	t.Run("happy", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/create", nil)
+		req.Body = io.NopCloser(bytes.NewReader([]byte(`{"name": "mimicked", "val": "attempt"}`)))
+		resp := httptest.NewRecorder()
+		router.Routes(handler).ServeHTTP(resp, req)
 
-func assertResponseBody(t testing.TB, got, want string) {
+		// status code
+		status_got := resp.Code
+		status_want := http.StatusCreated
+		assertResponseCreate(t, status_got, status_want)
+
+		// location
+		location_got := "/pairs/1"
+		location_want := resp.Header().Get("Location")
+		assertResponseString(t, location_got, location_want)
+
+		// data
+		var p pair.Pair
+		json.NewDecoder(resp.Body).Decode(&p)
+		data_got := p.Val
+		data_want := "attempt"
+		assertResponseString(t, data_got, data_want)
+	})
+
+	t.Run("missing name", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/create", nil)
+		req.Body = io.NopCloser(bytes.NewReader([]byte(`{"naame": "mimicked", "val": "attempt"}`)))
+		resp := httptest.NewRecorder()
+		router.Routes(handler).ServeHTTP(resp, req)
+
+		// status code
+		status_got := resp.Code
+		status_want := http.StatusBadRequest
+		assertResponseCreate(t, status_got, status_want)
+	})
+
+	t.Run("missing val", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/create", nil)
+		req.Body = io.NopCloser(bytes.NewReader([]byte(`{"name": "mimicked", "vaal": "attempt"}`)))
+		resp := httptest.NewRecorder()
+		router.Routes(handler).ServeHTTP(resp, req)
+
+		// status code
+		status_got := resp.Code
+		status_want := http.StatusBadRequest
+		assertResponseCreate(t, status_got, status_want)
+	})
+}
+
+func assertResponseString(t testing.TB, got, want string) {
 	t.Helper()
 	if got != want {
 		t.Errorf("got %q, want %q", got, want)
+	}
+}
+
+func assertResponseCreate(t testing.TB, got, want int) {
+	t.Helper()
+	if got != want {
+		t.Errorf("got %d, want %d", got, want)
 	}
 }
 

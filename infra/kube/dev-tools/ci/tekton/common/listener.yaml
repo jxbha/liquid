@@ -2,6 +2,7 @@ apiVersion: triggers.tekton.dev/v1beta1
 kind: EventListener
 metadata:
   name: webhook-listener
+  namespace: dev-tools
 spec:
   serviceAccountName: tekton-triggers-account
   triggers:
