@@ -31,25 +31,26 @@ Arguments in subscripts are included in dispatch.sh using bash's builtin `shift`
 
     bin
     ├── bootstrap
-    │   ├── dev.sh                    # bootstraps kubeadm on libvirt VMs
-    │   ├── k3d.sh                    # bootstraps k3d
-    │   ├── minikube.sh               # bootstraps minikube environment
-    │   └── README.md
+    │   ├── dev.sh                    # bootstraps kubeadm on libvirt VMs
+    │   ├── k3d.sh                    # bootstraps k3d
+    │   ├── minikube.sh               # bootstraps minikube environment
+    │   └── README.md
     ├── dispatch.sh                   # entrypoint to all utilities
     ├── envsetup                      # a workspace-setter, akin to "venv" for the project. always initialize this first to utilize scripts and utilities
     ├── init
-    │   ├── assets.sh                 # handles external kubernetes assets
-    │   ├── containers.sh             # pulls external containers for cluster registry
-    │   └── registry.sh               # pushes external containers to cluster registry
+    │   ├── assets.sh                 # handles external kubernetes assets
+    │   ├── containers.sh             # pulls external containers for cluster registry
+    │   └── registry.sh               # pushes external containers to cluster registry
     ├── Makefile
     ├── README.md
     ├── scripts
-    │   ├── registry_inspect_image.sh # check all tags of provided image from cluster registry
-    │   ├── registry_list_images.sh   # check all images from cluster registry
-    │   └── reset.sh                  # deprecated; was to prep hostPath volumes
+    │   ├── registry_inspect_image.sh # check all tags of provided image from cluster registry
+    │   ├── registry_list_images.sh   # check all images from cluster registry
+    │   └── reset.sh                  # deprecated; was to prep hostPath volumes
     └── security
         ├── cryptid.sh                # encrypt all 'secret.yaml' files in the project
         ├── dcryptid.sh               # decrypt all 'secret.yaml' files in the project
         └── selfsign.sh               # create namespaced certs: internal certificate, external certificate, and optionally the root CA
 
 Down the line, `help` flags will be added for each utility
+
