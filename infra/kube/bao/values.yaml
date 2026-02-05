@@ -1,0 +1,59 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
+server:
+  image:
+    tag: "2.4.4"
+
+  extraContainers: 
+    - name: bao-unseal
+      image: openbao/openbao:2.4.4
+      imagePullPolicy: IfNotPresent
+      readinessProbe:
+        exec: 
+          command: ["/bin/sh", "-c", "exit 0"]
+        initialDelaySeconds: 5
+        periodSeconds: 60
+      env:
+      - name: BAO_ADDR
+        value: "http://openbao:8200"
+      - name: BAO_UNSEAL_KEY_1
+        valueFrom:
+          secretKeyRef:
+            name: bao-unseal-key
+            key: BAO_UNSEAL_KEY_1
+      - name: BAO_UNSEAL_KEY_2
+        valueFrom:
+          secretKeyRef:
+            name: bao-unseal-key
+            key: BAO_UNSEAL_KEY_2
+      - name: BAO_UNSEAL_KEY_3
+        valueFrom:
+          secretKeyRef:
+            name: bao-unseal-key
+            key: BAO_UNSEAL_KEY_3
+      command:
+      - "/bin/sh"
+      - "-c"
+      - |
+        #!/bin/sh
+
+        while true; do
+          if [ "$(bao status -format=json 2>/dev/null | grep sealed.*true)" ]; then
+            echo "Starting Bao unseal process..."
+            bao operator unseal $BAO_UNSEAL_KEY_1
+            bao operator unseal $BAO_UNSEAL_KEY_2
+            bao operator unseal $BAO_UNSEAL_KEY_3
+          fi
+          sleep 10
+        done 
+
+  dataStorage:
+    enabled: true
+    size: 10Gi
+    mountPath: "/openbao/data"
+    storageClass: local-path # liquid
+
+  agent:
+    image:
+      tag: "2.4.4"

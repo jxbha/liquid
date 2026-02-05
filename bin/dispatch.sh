@@ -47,8 +47,11 @@ main(){
                 dev)
                     $BIN/bootstrap/dev.sh "$@"
                     ;;
+                secrets)
+                    $BIN/bootstrap/secrets.sh "$@"
+                    ;;
                 *)
-                    echo "Usage: $0 bootstrap { minikube|k3d|dev }"
+                    echo "Usage: $0 bootstrap { minikube|k3d|dev|secrets }"
                     ;;
             esac
             ;;
@@ -69,10 +72,10 @@ main(){
             esac
             ;;
         encrypt)
-            $BIN/security/cryptid.sh "$@"
+            $BIN/security/enc_secret.sh "$@"
             ;;
         decrypt)
-            $BIN/security/dcryptid.sh "$@"
+            $BIN/security/dec_secret.sh "$@"
             ;;
         certs)
             $BIN/security/selfsign.sh "$@"

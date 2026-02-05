@@ -9,27 +9,27 @@ spec:
       containers:
       - name: init-store
         image: postgres:16
-        command: ["sh",  "-c", "psql -h db.app.svc.cluster.local -U $PGUSER -d $PGDB -c \"CREATE TABLE $MANA_TABLE(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
+        command: ["sh",  "-c", "psql -h db.app.svc.cluster.local -U $PGUSER -d $PGDB -c \"CREATE TABLE $TABLE(id SERIAL PRIMARY KEY, key varchar(100), value varchar(100) );\""]
         env:
           - name: PGUSER
             valueFrom:
               secretKeyRef:
-                name: db-secret
+                name: mana-db
                 key: POSTGRES_USER
           - name: PGDB
             valueFrom:
               secretKeyRef:
-                name: db-secret
-                key: POSTGRES_DB
+                name: mana-db
+                key: POSTGRES_DATABASE
           - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
-                name: db-secret
+                name: mana-db
                 key: POSTGRES_PASSWORD
-          - name: MANA_TABLE
+          - name: TABLE
             valueFrom:
               secretKeyRef:
-                name: db-secret
-                key: MANA_TABLE
+                name: mana-db
+                key: TABLE
       restartPolicy: OnFailure
   backoffLimit: 4

@@ -15,7 +15,7 @@ see [architecture](./docs/architecture.md) for more information.
 - [x] CI/CD Pipeline (Gitea + Tekton)
 - [ ] Kubernetes orchestration (maybe)
 - [x] Monitoring and observability
-- [ ] Secret management
+- [x] Secret management
 - [ ] Distributed storage
 - [ ] Backup and recovery
 - [ ] Complete documentation
