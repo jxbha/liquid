@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# NOTE: Deprecated; now handled via a Kubernetes job.
+
 set -e
 CONTAINERS="$ROOT/infra/kube/containers/versions.txt"
 

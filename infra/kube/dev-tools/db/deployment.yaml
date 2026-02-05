@@ -59,11 +59,11 @@ spec:
               secretKeyRef:
                 name: db-secret
                 key: POSTGRES_PASSWORD
-          - name: POSTGRES_DB
+          - name: POSTGRES_DATABASE
             valueFrom:
               secretKeyRef:
                 name: db-secret
-                key: POSTGRES_DB
+                key: POSTGRES_DATABASE
         ports:
         - containerPort: 5432
         volumeMounts:

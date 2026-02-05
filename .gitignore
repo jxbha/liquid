@@ -1,12 +1,11 @@
 # general
+tmp
 TODO
 *topology*
 test.yaml
 
 # sensitive ENV
 .env
-.sops.yaml
-keys.txt
 
 # deployment statefiles & misc
 .terraform*
@@ -26,10 +25,10 @@ kconfig
 *.key
 *.srl
 
-# infra/kube/vendor/common/*.yaml
-# !infra/kube/vendor/common/kustomization.yaml
-# infra/kube/vendor/networking/*.yaml
-# !infra/kube/vendor/networking/kustomization.yaml
+infra/kube/vendor/common/*.yaml
+!infra/kube/vendor/common/kustomization.yaml
+infra/kube/vendor/networking/*.yaml
+!infra/kube/vendor/networking/kustomization.yaml
 app/mana/vendor/*
 app/mana/.build-trigger
 !app/mana/vendor/modules.txt
