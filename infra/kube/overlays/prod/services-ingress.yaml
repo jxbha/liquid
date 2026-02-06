@@ -10,7 +10,6 @@ spec:
       - gitea.jbernh.xyz
       - tekton.jbernh.xyz
     secretName: tls-server
->>>>>>> ab80029 (Functioning Tekton pipeline, overlays for dev/prod, modified custom images):infra/kube/overlays/prod/services-ingress.yaml
   rules:
   - host: gitea.jbernh.xyz
     http:

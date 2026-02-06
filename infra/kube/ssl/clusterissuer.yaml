@@ -1,0 +1,14 @@
+# https://cert-manager.io/docs/configuration/vault/#option-2-vault-authentication-method-use-kubernetes-auth
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: vault-issuer
+spec:
+  vault:
+    path: "pki/sign/issuer"
+    server: "http://openbao.vault.svc.cluster.local:8200"
+    auth:
+      kubernetes:
+        role: cert-manager-role
+        serviceAccountRef:
+          name: vault-issuer
