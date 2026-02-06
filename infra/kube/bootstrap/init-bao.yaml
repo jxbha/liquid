@@ -20,6 +20,7 @@ spec:
         - -c
         - |
           #!/bin/sh
+          set -e
           apk add --no-cache jq kubectl
 
           clean(){
@@ -30,7 +31,7 @@ spec:
           # check if bao is initialized
           READY=$(bao status -format=json 2>/dev/null | jq -r .initialized || echo "unknown")
           echo "SERVER STATUS: " $READY
-          
+
           # if not, run `bao operator init` - collect output into secrets
           if [ "$READY" = "false" ]; then
             bao operator init -format=json > bao-init-output.txt
