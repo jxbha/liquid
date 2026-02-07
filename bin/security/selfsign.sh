@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# NOTE: Deprecated; cert lifecycle managed by CertManager
+
 DIR="$(dirname "$0")"
 CACRT="$ROOT/config/ssl/ca.crt"
 CONFIG="$ROOT/config/ssl/ca.cnf"

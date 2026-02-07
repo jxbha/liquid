@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bootstrap-bao
+  namespace: vault
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: bootstrap-bao
+        image: openbao/openbao:2.4.4
+        env:
+        - name: BAO_ADDR
+          value: "http://openbao:8200"
+        - name: BAO_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bao-root-token
+              key: token
+        command:
+        - /bin/sh
+        - -c
+        - |
+          #!/bin/sh
+
+          # Bootstrap - kube job, reads root token from secret,
+          # checks if policies etc are set, runs if not.
+          if ! bao auth list | grep -q kubernetes; then
+            bao auth enable kubernetes
+          fi
+
+          if ! bao read auth/kubernetes/config >/dev/null 2>&1; then
+            bao write auth/kubernetes/config \
+                kubernetes_host=https://kubernetes.default.svc.cluster.local:443
+          fi
+
+          if ! bao secrets list | grep -q "^secret/"; then
+            bao secrets enable -path=secret kv-v2
+          fi
+
+          if ! bao policy read eso-policy >/dev/null 2>&1; then
+            bao policy write eso-policy - <<EOF
+          path "secret/data/*" {
+            capabilities = ["read", "list"]
+          }
+          path "secret/metadata/*" {
+            capabilities = ["list"]
+          }
+          EOF
+          fi
+
+          if ! bao read auth/kubernetes/role/eso-role >/dev/null 2>&1; then
+            bao write auth/kubernetes/role/eso-role \
+                bound_service_account_names=vault-auth \
+                bound_service_account_namespaces=vault \
+                policies=eso-policy ttl=24h audience=vault
+          fi

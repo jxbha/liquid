@@ -3,6 +3,17 @@ CWD="$ROOT"/infra/kube/bao
 # helm repo add openbao-secrets-operator https://github.com/openbao/openbao-secrets-operator
 # helm repo add external-secrets https://charts.external-secrets.io
 
+#helm install external-secrets \
+#   external-secrets/external-secrets 
+#    -n vault \
+#    --create-namespace \
+#    --set installCRDs=false
+
+if [ -z $ROOT ]; then
+    echo "[ERROR    root directory unset; check workspace"
+    exit 1
+fi
+
 helm uninstall openbao
 kubectl delete -n vault job/init-bao job/bootstrap-bao job/bootstrap-pki secret/bao-root-token secret/bao-unseal-key pvc/data-openbao-0
 helm install openbao "$ROOT"/infra/kube/charts/openbao \
@@ -18,12 +29,7 @@ timeout 120 bash -c '
 '
 kubectl apply -f "$ROOT"/infra/kube/bootstrap/bootstrap-bao-pki.yaml
 kubectl apply -f "$ROOT"/infra/kube/bootstrap/bootstrap-bao-kv.yaml
-kubectl wait --for=condition=complete job/bootstrap-pki -n vault --timeout=180s
-kubectl wait --for=condition=complete job/bootstrap-bao -n vault --timeout=180s
+kubectl wait --for=condition=complete job/bootstrap-pki job/bootstrap-bao -n vault --timeout=180s
+kubectl apply -f "$ROOT"/infra/kube/bao/rbac.yaml
+kubectl apply -f "$ROOT"/infra/kube/ssl/rbac.yaml
 dispatch.sh bootstrap secrets
-
-#helm install external-secrets \
-#   external-secrets/external-secrets 
-#    -n vault \
-#    --create-namespace \
-  # --set installCRDs=false
