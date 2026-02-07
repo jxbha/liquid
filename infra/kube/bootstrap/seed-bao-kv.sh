@@ -115,6 +115,11 @@ brevo() {
       return 1
     fi
 
+    if [[ -z "$ROOT" ]]; then
+      echo -e "[ERROR]\troot directory unset; check workspace"
+      return 1
+    fi
+
     BREVO_API_KEY=$(sops -d "$ROOT"/infra/secrets/brevo.enc.yaml | yq -r '.stringData.api_key')
     bao kv put secret/monitoring/brevo \
     api_key="$BREVO_API_KEY"
