@@ -108,22 +108,17 @@ prometheus() {
 }
 
 brevo() {
-  EXISTS=$(bao kv get -field="password" secret/monitoring/brevo)
+    EXISTS=$(bao kv get -field="password" secret/monitoring/brevo 2>/dev/null)
 
-  if [[ $EXISTS ]]; then
-    echo -e "[ERROR]\tbrevo: secret exists."
-    return 1
-  fi
-
-  if [[ -z $BREVO_API_KEY ]]; then
-      echo -e "[ERROR\tbrevo: env var BREVO_API_KEY unset. check workspace"
+    if [[ $EXISTS ]]; then
+      echo -e "[ERROR]\tbrevo: secret exists."
       return 1
-  fi
+    fi
 
-
-  local PASSWORD=$BREVO_API_KEY
+    BREVO_API_KEY=$(sops -d "$ROOT"/infra/secrets/brevo.enc.yaml | yq -r '.stringData.api_key')
     bao kv put secret/monitoring/brevo \
-      password="$PASSWORD"
+    api_key="$BREVO_API_KEY"
+
 }
 
 main() {
