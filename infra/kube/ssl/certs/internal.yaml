@@ -21,6 +21,7 @@ spec:
       - Cathedral
   dnsNames:
     - "*.svc.cluster.local"
+    - "*.dev-tools.svc.cluster.local"
   issuerRef:
     name: vault-issuer
     kind: ClusterIssuer

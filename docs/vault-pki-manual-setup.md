@@ -58,13 +58,13 @@ bao policy write pki - <<EOF
 EOF
 ```
 
-4a. Create the issuer role
+4a. Create the issuer role (authenticates with Kubernetes)
 ```bash
 bao write auth/kubernetes/role/issuer \
         bound_service_account_names=vault-issuer \
         bound_service_account_namespaces=cert-manager \
-        policies=vault-issuer \
-        ttl=1m
+        policies=pki \
+        ttl=1h
 ```
 
 4b. Create the PKI role (defines certificate constraints)
@@ -72,7 +72,8 @@ bao write auth/kubernetes/role/issuer \
 bao write pki/roles/liquid-internal \
         allowed_domains=jbernh.xyz,svc.cluster.local \
         allow_subdomains=true \
-        allow_any_name=true \
+        allow_bare_domains=true \
+        allow_glob_domains=true \
         require_cn=false \
         use_csr_common_name=false \
         max_ttl=2160h
@@ -122,6 +123,11 @@ Read issuer:
 
 ```
 bao read pki/issuer/ISSUER_ID
+```
+
+Read cert:
+```
+bao read -field=certificate pki/cert/ca
 ```
 
 ## References

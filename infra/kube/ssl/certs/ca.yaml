@@ -1,0 +1,16 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: tls-ca
+  namespace: cluster-bootstrap
+spec:
+  secretStoreRef:
+    name: vault-backend
+    kind: ClusterSecretStore
+  target:
+    name: tls-ca
+  data:
+  - secretKey: ca.crt
+    remoteRef:
+      key: pki/cert/ca
+      property: certificate
