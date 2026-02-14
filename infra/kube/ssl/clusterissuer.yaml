@@ -9,6 +9,6 @@ spec:
     server: "http://openbao.vault.svc.cluster.local:8200"
     auth:
       kubernetes:
-        role: cert-manager-role
+        role: issuer
         serviceAccountRef:
           name: vault-issuer
