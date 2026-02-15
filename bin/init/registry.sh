@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # Bootstraps the cluster registry during a kube port-forward
-#
-# Currently assumes everything has been tagged for localhost on the workstation.
-# Might clean that up later.
+# Assumes everything has been tagged for localhost on the workstation.
+# NOTE: Deprecated; now handled via a Kubernetes job: $ROOT/infra/kube/utility/jobs/upstream/
+
 
 set -e
 
@@ -37,9 +37,8 @@ push(){
 }
 
 main(){
-    fwd
-    tag
-    push
+    echo "WAIT! deprecated - see liquid/infra/kube/utility/jobs/upstream/bootstrap-registry.yaml"
+    exit 1
 }
 
 main

@@ -6,7 +6,7 @@ metadata:
 spec:
   containers:
   - name: helper
-    image: registry.dev-tools.svc.cluster.local:5000/helper:4
+    image: registry.dev-tools.svc.cluster.local:5000/kubetools:latest
     imagePullPolicy: Always
     securityContext:
       privileged: true

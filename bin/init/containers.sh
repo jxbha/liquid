@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# NOTE: Deprecated; now handled via a Kubernetes job.
+# NOTE: Deprecated; now handled via a Kubernetes job: $ROOT/infra/kube/utility/jobs/upstream/
 
 set -e
 CONTAINERS="$ROOT/infra/kube/containers/versions.txt"
@@ -19,8 +19,8 @@ tag() {
 }
 
 main() {
-    pull
-    tag
+    echo "WAIT! deprecated - see liquid/infra/kube/utility/jobs/upstream/bootstrap-registry.yaml"
+    exit 1
 }
 
 main
