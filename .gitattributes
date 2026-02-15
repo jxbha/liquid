@@ -1,3 +1,5 @@
 # https://github.com/github-linguist/linguist/blob/main/docs/how-linguist-works.md
 infra/kube/vendor/* linguist-vendored
 infra/kube/charts/* linguist-vendored
+app/mana/vendor/*   linguist-vendored
+
