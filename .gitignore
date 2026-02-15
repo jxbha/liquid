@@ -25,6 +25,17 @@ kconfig
 *.key
 *.srl
 
+infra/kube/vendor/common/*.yaml
+!infra/kube/vendor/common/kustomization.yaml
+infra/kube/vendor/networking/*.yaml
+!infra/kube/vendor/networking/kustomization.yaml
+infra/kube/vendor/all/*.yaml
+!infra/kube/vendor/all/kustomization.yaml
 
+app/mana/vendor/*
+app/mana/.build-trigger
 !app/mana/vendor/modules.txt
-app/mana/vendor/
+infra/kube/charts/**
+!infra/kube/charts/*/
+!infra/kube/charts/*/Chart.yaml
+!infra/kube/charts/*/Chart.lock
