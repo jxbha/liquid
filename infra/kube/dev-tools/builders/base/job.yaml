@@ -1,0 +1,51 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: build-custom-image
+  namespace: dev-tools #or boostrap?
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: OnFailure
+      volumes:
+        - name: root-ca
+          secret:
+            secretName: tls-ca
+        - name: buildkit-config
+          configMap:
+            name: buildkit-config
+        - name: build-script
+          configMap:
+            name: build-script
+            defaultMode: 0755
+        - name: common-script
+          configMap:
+            name: common-script
+            defaultMode: 0755
+      containers:
+        - name: build-image
+          image: registry.dev-tools.svc.cluster.local:5000/buildkit:v0.21.1-rootless
+          env:
+            - name: REGISTRY
+              value: registry.dev-tools.svc.cluster.local:5000
+            - name: BUILDKITD_FLAGS
+              value: "--config=/etc/buildkit/config/buildkitd.toml --oci-worker-no-process-sandbox"
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            appArmorProfile:
+              type: Unconfined
+          volumeMounts:
+          - name: root-ca
+            mountPath: /cert/ca.crt
+            subPath: ca.crt
+          - name: buildkit-config
+            mountPath: /etc/buildkit/config
+          - name: common-script
+            mountPath: /scripts/common.sh
+            subPath: common.sh
+          - name: build-script
+            mountPath: /scripts/build-script.sh
+            subPath: build-script.sh
+          command: ["/scripts/build-script.sh"]

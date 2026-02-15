@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: dev-tools
+
+resources:
+- ../../base/
+
+components:
+- ../../components/scripts/
+
+configMapGenerator:
+- name: build-script
+  files:
+  - build-script.sh=./build-ci-golang.sh
+
+patches:
+- patch: |-
+    - op: replace
+      path: /metadata/name
+      value: build-ci-golang
+  target:
+    kind: Job

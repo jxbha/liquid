@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bootstrap-registry
+  namespace: cluster-bootstrap
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: upstream-images
+        configMap:
+          name: upstream-images
+      - name: tls-ca
+        secret:
+          secretName: tls-ca
+      containers:
+      - name: upstream
+        image: quay.io/skopeo/stable:v1.20
+        command:
+        - /bin/sh
+        - -c
+        - |
+          IMAGES="/opt/upstream.txt"
+          TARGET="registry.dev-tools.svc.cluster.local:5000"
+          while read -r record; do
+              shortname=$(echo "$record" | awk -F/ '{print $NF}')
+              skopeo copy docker://$record docker://$TARGET/$shortname
+          done < "$IMAGES"
+        volumeMounts:
+        - name: upstream-images
+          mountPath: /opt/
+        - name: tls-ca
+          mountPath: /etc/ssl/certs/ca.crt
+          subPath: ca.crt

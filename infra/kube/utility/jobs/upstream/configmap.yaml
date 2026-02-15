@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upstream-images
+  namespace: cluster-bootstrap
+data:
+  upstream.txt: |
+    docker.io/library/postgres:17
+    docker.io/library/golang:1.24-alpine3.22
+    docker.io/library/alpine:3.20
+    docker.io/moby/buildkit:v0.21.1-rootless
+    docker.io/alpine/git:v2.47.2
+    docker.io/library/busybox:1.37.0
