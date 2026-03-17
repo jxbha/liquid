@@ -15,3 +15,14 @@ ${k} ansible_host=${v}
 [controllers:vars]
 ansible_user=${user}
 ansible_ssh_private_key_file=${ssh_key}
+
+[kube:children]
+controllers
+workers
+
+[utility_dns]
+dns ansible_host=${dns_ip}
+
+[utility_dns:vars]
+ansible_user=${user}
+ansible_ssh_private_key_file=${ssh_key}

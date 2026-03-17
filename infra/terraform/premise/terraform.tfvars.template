@@ -1,0 +1,31 @@
+# Proxmox URL
+url = ""
+# Promox Node
+node = ""
+# Username for defined Proxmox Token
+proxmox_api_id = ""
+# Password for defined Proxmox Token
+proxmox_api_secret = ""
+# public ssh key for authenticating. absolute path. can also add TF_VAR_ssh_key
+ssh_key = ""
+
+kube_workers = {
+  "kube-w01" = {
+    ip           = "",
+    vm_id_offset = 1
+  }
+  "kube-w02" = {
+    ip           = "",
+    vm_id_offset = 2
+  }
+}
+
+kube_controllers = {
+  "kube-c01" = {
+    ip           = ""
+    vm_id_offset = 0
+  }
+}
+
+dns_ip     = ""
+gateway_ip = ""

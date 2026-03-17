@@ -1,10 +1,10 @@
 variable "ssh_key" {
-    type = string
-    default = "~/.ssh/liquid/id_ed25519"
+  type    = string
+  default = "~/.ssh/liquid/id_ed25519"
 }
 variable "user" {
-    type = string
-    default = "gh0st"
+  type    = string
+  default = "gh0st"
 }
 
 variable "workers" {
@@ -15,3 +15,6 @@ variable "controllers" {
   type = map(string)
 }
 
+variable "dns_ip" {
+  type = string
+}
