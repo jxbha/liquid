@@ -1,0 +1,40 @@
+---
+- name: Install dnsmasq
+  ansible.builtin.apt:
+    pkg: dnsmasq
+
+- name: Copy dnsmasq configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/srv/dnsmasq.conf"
+    dest: /etc/dnsmasq.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy systemd-resolved configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/srv/dnsresolved.conf"
+    dest: /etc/systemd/resolved.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy hosts file
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/srv/hosts"
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Restart systemd-resolved
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    name: systemd-resolved
+
+- name: Restart dnsmasq
+  ansible.builtin.systemd_service:
+    state: restarted
+    daemon_reload: true
+    name: dnsmasq

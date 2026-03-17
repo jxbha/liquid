@@ -14,8 +14,14 @@
   roles:
     - common
 
+- name: apply dns configuration
+  become: true
+  hosts: utility_dns
+  roles:
+    - dns
+
 - name: apply kubernetes configuration
-  hosts: all
+  hosts: kube
   become: true
   roles:
     - kube-base

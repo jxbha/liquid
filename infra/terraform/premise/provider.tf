@@ -2,7 +2,7 @@ terraform {
   required_providers {
     proxmox = {
       source  = "bpg/proxmox"
-      version = "0.73.0"
+      version = "0.98.1"
     }
   }
 }
@@ -14,6 +14,6 @@ provider "proxmox" {
   ssh {
     agent       = true
     username    = "root"
-    private_key = file("~/.ssh/liquid/id_ed25519")
+    private_key = file(var.ssh_key)
   }
 }
