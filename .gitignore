@@ -25,6 +25,8 @@ kconfig
 *.key
 *.srl
 
+infra/kube/vendor/storage/*.yaml
+!infra/kube/vendor/storage/kustomization.yaml
 infra/kube/vendor/common/*.yaml
 !infra/kube/vendor/common/kustomization.yaml
 infra/kube/vendor/networking/*.yaml
