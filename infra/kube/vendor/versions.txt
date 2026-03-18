@@ -1,7 +1,9 @@
-tekton-pipelines=v0.45.0,https://storage.googleapis.com/tekton-releases/pipeline/previous/v1.0.0/release.yaml,common
-tekton-triggers=v0.32.0,https://storage.googleapis.com/tekton-releases/triggers/previous/v0.32.0/release.yaml,common
-tekton-interceptors=v0.32.0,https://storage.googleapis.com/tekton-releases/triggers/previous/v0.32.0/interceptors.yaml,common
+tekton-pipelines=v1.6.1,https://github.com/tektoncd/pipeline/releases/download/v1.6.1/release.yaml,common
+tekton-triggers=v0.32.0,https://github.com/tektoncd/triggers/releases/download/v0.32.0/release.yaml,common
+tekton-interceptors=v0.32.0,https://github.com/tektoncd/triggers/releases/download/v0.32.0/interceptors.yaml,common
 tekton-dashboard=v0.57.0,https://github.com/tektoncd/dashboard/releases/download/v0.57.0/release-full.yaml,common
-local-path-storage=v0.0.31,https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.31/deploy/local-path-storage.yaml,common
-ingress-nginx=v1.12.2,https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.12.2/deploy/static/provider/cloud/deploy.yaml,networking
-metallb=v0.14.0,https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml,networking
+local-path-storage=v0.0.35,https://raw.githubusercontent.com/rancher/local-path-provisioner/refs/tags/v0.0.35/deploy/local-path-storage.yaml,common
+ingress-nginx=v3.15.2,https://raw.githubusercontent.com/kubernetes/ingress-nginx/refs/tags/ingress-nginx-3.15.2/deploy/static/provider/baremetal/deploy.yaml,networking
+metallb=v0.15.3,https://raw.githubusercontent.com/metallb/metallb/refs/tags/v0.15.3/config/manifests/metallb-native.yaml,networking
+cert-manager=v1.20.0,https://github.com/cert-manager/cert-manager/releases/download/v1.20.0/cert-manager.yaml,networking
+argocd=v3.3.4,https://github.com/argoproj/argo-cd/blob/v3.3.4/manifests/install.yaml,common
