@@ -18,58 +18,63 @@ spec:
       securityContext:
         runAsUser: 999
         runAsGroup: 999
-        fsGroup: 999  
+        fsGroup: 999
       volumes:
-      - name: data-tools
-        persistentVolumeClaim:
-          claimName: data-tools
-      - name: db-config
-        configMap:
-          name: db-config
-      - name: tls-cert
-        secret:
-          secretName: tls-internal
-          defaultMode: 0600
-      initContainers:
-      - name: fix-permissions
-        image: registry.dev-tools.svc.cluster.local:5000/busybox:1.37.0
-        command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data && chmod -R 0700 /var/lib/postgresql/data"]
-        volumeMounts:
         - name: data-tools
-          mountPath: /var/lib/postgresql/data
-        securityContext:
-          runAsUser: 0 
-      containers:
-      - name: db
-        image: registry.dev-tools.svc.cluster.local:5000/postgres:17
-        imagePullPolicy: IfNotPresent
-        args:
-         - -c
-         - hba_file=/opt/postgres/pg_hba.conf
-         - -c
-         - config_file=/opt/postgres/postgresql.conf
-        env:
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: POSTGRES_USER
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: POSTGRES_PASSWORD
-          - name: POSTGRES_DATABASE
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: POSTGRES_DATABASE
-        ports:
-        - containerPort: 5432
-        volumeMounts:
-        - name: data-tools
-          mountPath: /var/lib/postgresql/data
+          persistentVolumeClaim:
+            claimName: data-tools
         - name: db-config
-          mountPath: /opt/postgres
+          configMap:
+            name: db-config
         - name: tls-cert
-          mountPath: /etc/postgresql-conf
+          secret:
+            secretName: tls-internal
+            defaultMode: 0600
+      initContainers:
+        - name: fix-permissions
+          image: registry.jbernh.xyz/busybox:1.37.0
+          command:
+            [
+              "sh",
+              "-c",
+              "chown -R 999:999 /var/lib/postgresql/data && chmod -R 0700 /var/lib/postgresql/data",
+            ]
+          volumeMounts:
+            - name: data-tools
+              mountPath: /var/lib/postgresql/data
+          securityContext:
+            runAsUser: 0
+      containers:
+        - name: db
+          image: registry.jbernh.xyz/postgres:17
+          imagePullPolicy: IfNotPresent
+          args:
+            - -c
+            - hba_file=/opt/postgres/pg_hba.conf
+            - -c
+            - config_file=/opt/postgres/postgresql.conf
+          env:
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_DATABASE
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: data-tools
+              mountPath: /var/lib/postgresql/data
+            - name: db-config
+              mountPath: /opt/postgres
+            - name: tls-cert
+              mountPath: /etc/postgresql-conf

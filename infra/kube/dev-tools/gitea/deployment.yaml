@@ -19,12 +19,9 @@ spec:
         - name: data-gitea
           persistentVolumeClaim:
             claimName: data-gitea
-        - name: tls-ca
-          secret:
-            secretName: tls-ca
       initContainers:
         - name: fix-permissions
-          image: registry.dev-tools.svc.cluster.local:5000/busybox:1.37.0
+          image: registry.jbernh.xyz/busybox:1.37.0
           command: ["sh", "-c"]
           args:
             - |
@@ -36,16 +33,14 @@ spec:
       containers:
         - name: gitea
           image: gitea/gitea:1.23.7
+          envFrom:
+            - configMapRef:
+                name: gitea-config
           env:
             - name: USER_UID
               value: "1000"
             - name: USER_GID
               value: "1000"
-            - name: GITEA__database__DB_TYPE
-              valueFrom:
-                secretKeyRef:
-                  name: gitea-secret
-                  key: DB_TYPE
             - name: GITEA__database__HOST
               valueFrom:
                 secretKeyRef:
@@ -66,26 +61,6 @@ spec:
                 secretKeyRef:
                   name: gitea-secret
                   key: PASSWD
-            - name: GITEA__database__SSL_MODE
-              valueFrom:
-                secretKeyRef:
-                  name: gitea-secret
-                  key: SSL_MODE
-            - name: GITEA__server__DOMAIN
-              valueFrom:
-                secretKeyRef:
-                  key: DOMAIN
-                  name: gitea-secret
-            - name: GITEA__server__SSH_DOMAIN
-              valueFrom:
-                secretKeyRef:
-                  key: SSH_DOMAIN
-                  name: gitea-secret
-            - name: GITEA__server__ROOT_URL
-              valueFrom:
-                secretKeyRef:
-                  key: ROOT_URL
-                  name: gitea-secret
             - name: GITEA__webhook__ALLOWED_HOST_LIST
               valueFrom:
                 secretKeyRef:
@@ -101,6 +76,3 @@ spec:
           volumeMounts:
             - name: data-gitea
               mountPath: /data
-            - name: tls-ca
-              mountPath: /etc/ssl/certs/ca.crt
-              subPath: ca.crt

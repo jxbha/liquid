@@ -6,28 +6,28 @@ metadata:
 spec:
   ingressClassName: nginx
   tls:
-  - hosts:
-      - gitea.jbernh.xyz
-      - tekton.jbernh.xyz
-    secretName: tls-server
+    - hosts:
+        - gitea.jbernh.xyz
+        - registry.jbernh.xyz
+      secretName: tls-server
   rules:
-  - host: gitea.jbernh.xyz
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: gitea-http
-            port:
-              number: 3000
-  - host: tekton.jbernh.xyz
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: tekton-dashboard
-            port:
-              number: 9097
+    - host: gitea.jbernh.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gitea-http
+                port:
+                  number: 3000
+    - host: registry.jbernh.xyz
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: registry
+                port:
+                  number: 5000

@@ -16,29 +16,21 @@ spec:
         purpose: registry
     spec:
       containers:
-      - name: registry
-        image: registry:2
-        ports:
-        - containerPort: 5000
-        envFrom:
-        - configMapRef:
-            name: registry-config
-        env:
-        - name: REGISTRY_HTTP_SECRET
-          valueFrom: 
-            secretKeyRef:
-              name: registry-secret
-              key: REGISTRY_HTTP_SECRET
-        volumeMounts:
-        - name: registry-data
-          mountPath: /var/lib/registry
-          subPath: registry
-        - name: tls-cert
-          mountPath: /etc/registry/certs
+        - name: registry
+          image: registry:2
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REGISTRY_HTTP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: registry-secret
+                  key: REGISTRY_HTTP_SECRET
+          volumeMounts:
+            - name: registry-data
+              mountPath: /var/lib/registry
+              subPath: registry
       volumes:
-      - name: registry-data
-        persistentVolumeClaim:
-          claimName: data-registry
-      - name: tls-cert
-        secret:
-          secretName: tls-internal
+        - name: registry-data
+          persistentVolumeClaim:
+            claimName: data-registry

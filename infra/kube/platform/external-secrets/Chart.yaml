@@ -1,0 +1,11 @@
+apiVersion: v2
+appVersion: v2.1.0
+name: external-secrets
+description: External Secrets Chart
+home: https://external-secrets.io
+kubeVersion: ">= 1.30.0-0"
+dependencies:
+  - name: external-secrets
+    version: "2.1.0"
+    repository: https://charts.external-secrets.io
+version: 2.1.0

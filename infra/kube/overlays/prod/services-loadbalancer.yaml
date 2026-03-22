@@ -5,6 +5,7 @@ metadata:
   namespace: ingress-nginx
   annotations:
     metallb.universe.tf/loadBalancerIPs: 192.168.3.50
+    metallb.universe.tf/allow-shared-ip: gitea
 spec:
   selector:
     app.kubernetes.io/name: ingress-nginx
@@ -19,17 +20,18 @@ spec:
   type: LoadBalancer
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
   name: ssh-lb
+  namespace: dev-tools
   annotations:
-    metallb.universe.tf/loadBalancerIPs: 192.168.3.51
+    metallb.universe.tf/loadBalancerIPs: 192.168.3.50
+    metallb.universe.tf/allow-shared-ip: gitea
 spec:
   ports:
-  - port: 22
-    targetPort: 22
+    - port: 2222
+      targetPort: 22
   selector:
     purpose: git
   type: LoadBalancer

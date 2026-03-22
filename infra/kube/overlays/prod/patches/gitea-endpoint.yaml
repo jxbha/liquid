@@ -1,12 +1,9 @@
 apiVersion: v1
-kind: Secret
+kind: ConfigMap
 metadata:
-  name: gitea-secret
+  name: gitea-config
   namespace: dev-tools
-  labels:
-    purpose: git
-type: Opaque
-stringData:
+data:
   DOMAIN: https://gitea.jbernh.xyz
   SSH_DOMAIN: https://gitea.jbernh.xyz
   ROOT_URL: https://gitea.jbernh.xyz

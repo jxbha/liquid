@@ -4,4 +4,3 @@ resources:
   - db/
   - registry/
   - gitea/
-  - ci/tekton/

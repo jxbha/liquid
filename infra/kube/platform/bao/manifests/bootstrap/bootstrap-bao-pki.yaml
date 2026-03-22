@@ -1,0 +1,70 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name:  bootstrap-pki
+  namespace: vault
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: bootstrap-pki
+        image: openbao/openbao:2.4.4
+        env:
+        - name: BAO_ADDR
+          value: "http://openbao:8200"
+        - name: BAO_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bao-root-token
+              key: token
+        command:
+        - /bin/sh
+        - -c
+        - |
+          #!/bin/sh
+
+          if ! bao read auth/kubernetes/config >/dev/null 2>&1; then
+            bao write auth/kubernetes/config \
+                kubernetes_host=https://kubernetes.default.svc.cluster.local:443
+          fi
+
+          if ! bao secrets list | grep -q pki; then
+            bao secrets enable pki
+          fi
+
+          # already idempotent
+          bao secrets tune -max-lease-ttl=87600h pki
+
+          if ! bao read pki/issuer/liquid-root >/dev/null 2>&1; then
+            bao write pki/root/generate/internal \
+                common_name="liquid CA" \
+                issuer_name="liquid-root" \
+                ttl=87600h
+          fi
+
+          if ! bao policy read pki  >/dev/null 2>&1; then
+            bao policy write pki - <<EOF
+          path "pki/sign/issuer" {
+            capabilities = ["create", "update"]
+          }
+          EOF
+          fi
+
+          if ! bao read auth/kubernetes/role/issuer  >/dev/null 2>&1; then
+            bao write auth/kubernetes/role/issuer \
+                bound_service_account_names=vault-issuer \
+                bound_service_account_namespaces=cert-manager \
+                policies=pki \
+                ttl=1m
+          fi
+
+          if ! bao read pki/roles/issuer  >/dev/null 2>&1; then
+            bao write pki/roles/issuer \
+                allowed_domains=jbernh.xyz,svc.cluster.local \
+                allow_subdomains=true \
+                require_cn=false \
+                use_csr_common_name=false \
+                max_ttl=2160h
+          fi
