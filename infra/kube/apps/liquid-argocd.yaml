@@ -1,10 +1,10 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: liquid-bao
+  name: liquid-argocd
   namespace: argocd
   labels:
-    name: liquid-bao
+    name: liquid-argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
