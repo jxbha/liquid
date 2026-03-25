@@ -4,3 +4,6 @@ resources:
   - metallb-v0.15.3.yaml
   - ingress-nginx-v1.12.2.yaml
   - cert-manager-v1.20.0.yaml
+  - metallb-config.yaml
+patches:
+  - path: patches/job-ttl.yaml

@@ -11,4 +11,5 @@ resources:
 
 patches:
   - path: patches/job-ttl.yaml
+  - path: argo-kustomize-enable-helm.yaml
 #   - path: patches/gitea-endpoint.yaml
