@@ -6,20 +6,20 @@ metadata:
   labels:
     name: liquid-bao
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
   source:
     repoURL: http://gitea.jbernh.xyz:3000/jxbha/liquid/
-    path: infra/kube/platform/bao/overlays/prod
+    path: infra/kube/platform/argo/overlays/prod
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: vault
+    namespace: argocd
   syncPolicy:
     automated:
-      enabled: true
       selfHeal: true
+      enabled: true
     syncOptions:
       - ServerSideApply=true
       - CreateNamespace=true
