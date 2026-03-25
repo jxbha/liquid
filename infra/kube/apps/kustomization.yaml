@@ -6,3 +6,4 @@ resources:
   - liquid-argocd.yaml
   - liquid-bao.yaml
   - liquid-external-secrets.yaml
+  - liquid-cert-manager.yaml
