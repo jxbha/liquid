@@ -1,0 +1,14 @@
+# https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/helmcharts/
+# https://kubectl.docs.kubernetes.io/references/kustomize/builtins/#_helmchartinflationgenerator_
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+helmCharts:
+  - name: tailscale-operator
+    version: v1.94.2
+    releaseName: tailscale-operator
+    namespace: tailscale
+    valuesFile: helm/tailscale-operator/values.yaml
+helmGlobals:
+  chartHome: helm/
+resources:
+  - manifests/

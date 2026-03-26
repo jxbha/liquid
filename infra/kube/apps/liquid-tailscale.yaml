@@ -1,25 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: liquid-cert-manager
+  name: liquid-tailscale
   namespace: argocd
   labels:
-    name: liquid-cert-manager
+    name: liquid-tailscale
   annotations:
-    argocd.argoproj.io/sync-wave: "5"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   project: default
   source:
-    repoURL: http://gitea.jbernh.xyz:3000/jxbha/liquid/
-    path: infra/kube/platform/cert-manager/overlays/prod
+    repoURL: http://gitea.jbernh.xyz:3000/jxbha/liquid
+    path: infra/kube/platform/tailscale/overlays/prod
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: cert-manager
+    namespace: tailscale
   syncPolicy:
     automated:
       selfHeal: true
       enabled: true
     syncOptions:
       - ServerSideApply=true
-      - CreateNamespace=true
