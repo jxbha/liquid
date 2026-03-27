@@ -2,5 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - metallb-v0.15.3.yaml
-  - ingress-nginx-v3.15.2.yaml
+  - ingress-nginx-v1.12.2.yaml
   - cert-manager-v1.20.0.yaml
+  - metallb-config.yaml
+patches:
+  - path: patches/job-ttl.yaml

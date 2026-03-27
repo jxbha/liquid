@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: retrieve-ca
+  namespace: vault
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: ca-pull
+      restartPolicy: OnFailure
+      containers:
+        - name: retrieve-ca
+          image: openbao/openbao:2.4.4
+          env:
+            - name: BAO_ADDR
+              value: "http://openbao:8200"
+            - name: BAO_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: bao-root-token
+                  key: token
+          command:
+            - /bin/sh
+            - -c
+            - |
+              #!/bin/sh
+              set -e
+              apk add --no-cache kubectl
+
+              bao read -field=certificate pki/cert/ca >> secret.pem
+              kubectl create secret generic -n cluster-bootstrap --dry-run=client -o yaml --from-file=ca.crt=secret.pem tls-ca | kubectl apply -f -

@@ -1,3 +1,4 @@
+# saving for internal registry deployments; do NOT use with ingress
 apiVersion: v1
 kind: ConfigMap
 metadata:

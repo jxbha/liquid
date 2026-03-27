@@ -1,0 +1,16 @@
+# https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/helmcharts/
+# https://kubectl.docs.kubernetes.io/references/kustomize/builtins/#_helmchartinflationgenerator_
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+helmCharts:
+  - name: kube-prometheus-stack
+    version: v82.14.1
+    releaseName: kube-prometheus-stack
+    namespace: monitoring
+    valuesFile: helm/kube-prometheus-stack/values.yaml
+    additionalValuesFiles:
+      - helm/kube-prometheus-stack/grafana-values.yaml
+helmGlobals:
+  chartHome: helm
+resources:
+  - secrets/

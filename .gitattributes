@@ -1,3 +1,4 @@
 # https://github.com/github-linguist/linguist/blob/main/docs/overrides.md#vendored-code
 infra/kube/vendor/** linguist-vendored
-infra/kube/charts/** linguist-vendored
+**/charts/** linguist-vendored
+**/templates/** linguist-vendored

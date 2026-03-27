@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitea-config
+  namespace: dev-tools
+data:
+  DOMAIN: PLACEHOLDER
+  SSH_DOMAIN: PLACEHOLDER
+  ROOT_URL: PLACEHOLDER
+  SSL_MODE: require
+  DB_TYPE: postgres

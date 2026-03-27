@@ -3,50 +3,53 @@ kind: Job
 metadata:
   name: init-dbs
   namespace: dev-tools
+  annotations:
+    argocd.argoproj.io/sync-wave: "5"
 spec:
+  ttlSecondsAfterFinished: 180
   template:
     spec:
       containers:
-      - name: init-dbs
-        image: registry.dev-tools.svc.cluster.local:5000/postgres:17
-        command: ["sh",  "-c"]
-        args:
-          - |
-            psql -h db.dev-tools.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DATABASE <<EOF
-            CREATE USER $GITEA_USER WITH PASSWORD '$GITEA_PASSWORD';
-            CREATE DATABASE $GITEA_DB OWNER $GITEA_USER;
-            EOF
-        env:
-          - name: PGPASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: POSTGRES_PASSWORD
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: POSTGRES_USER
-          - name: POSTGRES_DATABASE
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: POSTGRES_DATABASE
-          - name: GITEA_USER
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: GITEA_USER
-          - name: GITEA_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: GITEA_PASSWORD
-          - name: GITEA_DB
-            valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: GITEA_DB
+        - name: init-dbs
+          image: registry.jbernh.xyz/postgres:17
+          command: ["sh", "-c"]
+          args:
+            - |
+              psql -h db.dev-tools.svc.cluster.local -U $POSTGRES_USER -d $POSTGRES_DATABASE <<EOF
+              CREATE USER IF NOT EXISTS $GITEA_USER WITH PASSWORD '$GITEA_PASSWORD';
+              CREATE DATABASE IF NOT EXISTS $GITEA_DB OWNER $GITEA_USER;
+              EOF
+          env:
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_USER
+            - name: POSTGRES_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: POSTGRES_DATABASE
+            - name: GITEA_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: GITEA_USER
+            - name: GITEA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: GITEA_PASSWORD
+            - name: GITEA_DB
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: GITEA_DB
       restartPolicy: OnFailure
   backoffLimit: 10
   #ttlSecondsAfterFinished: 60

@@ -1,0 +1,10 @@
+# https://argo-cd.readthedocs.io/en/latest/operator-manual/cluster-bootstrapping/
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - liquid-crds.yaml
+  - liquid-argocd.yaml
+  - liquid-bao.yaml
+  - liquid-external-secrets.yaml
+  - liquid-tailscale.yaml
+  - liquid-cert-manager.yaml

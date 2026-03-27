@@ -1,0 +1,13 @@
+apiVersion: v2
+appVersion: v2.5.1
+name: openbao
+description: OpenBao Chart
+home: https://github.com/openbao/openbao-helm
+kubeVersion: ">= 1.30.0-0"
+dependencies:
+  - name: openbao
+    version: "0.26.1"
+    repository: https://openbao.github.io/openbao-helm
+sources:
+  - https://github.com/openbao/openbao-helm
+version: 0.26.1

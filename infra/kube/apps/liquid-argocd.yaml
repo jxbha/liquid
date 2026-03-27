@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: liquid-argocd
+  namespace: argocd
+  labels:
+    name: liquid-argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  project: default
+  source:
+    repoURL: http://gitea.jbernh.xyz:3000/jxbha/liquid/
+    path: infra/kube/platform/argo/overlays/prod
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      enabled: true
+    syncOptions:
+      - ServerSideApply=true
+      - CreateNamespace=true

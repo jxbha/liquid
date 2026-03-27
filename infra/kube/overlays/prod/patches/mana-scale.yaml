@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mana
-  namespace: app
+  namespace: apps
   labels:
     purpose: mana
     app: mana
