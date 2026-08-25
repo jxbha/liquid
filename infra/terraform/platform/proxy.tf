@@ -1,8 +1,9 @@
-resource "proxmox_virtual_environment_vm" "dns" {
+resource "proxmox_virtual_environment_vm" "proxy" {
 
-  name        = "dns01"
-  description = "DNS server used by Proxmox host (Cathedral), kubernetes environment (liquid), and relevant workstations"
-  vm_id       = 9001
+  name        = "proxy"
+  description = "Reverse proxy used by Proxmox host (Cathedral), kubernetes environment (liquid), and relevant workstations"
+  tags        = ["terraform", "platform", "proxy"]
+  vm_id       = 9003
   node_name   = var.node
 
   agent {
@@ -38,11 +39,11 @@ resource "proxmox_virtual_environment_vm" "dns" {
 
   initialization {
     dns {
-      servers = ["1.1.1.1", "8.8.8.8"]
+      servers = ["${var.dns_ip}", "1.1.1.1", "8.8.8.8"]
     }
     ip_config {
       ipv4 {
-        address = "${var.dns_ip}/22"
+        address = "${var.proxy_ip}/22"
         gateway = var.gateway_ip
       }
     }

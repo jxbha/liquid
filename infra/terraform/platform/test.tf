@@ -1,8 +1,9 @@
-resource "proxmox_virtual_environment_vm" "repo" {
+resource "proxmox_virtual_environment_vm" "test" {
 
-  name        = "repo01"
-  description = "Git repository used by Proxmox host (Cathedral), kubernetes environment (liquid), and relevant workstations"
-  vm_id       = 9002
+  name        = "test"
+  description = "Testbed server"
+  tags        = ["terraform", "platform", "test"]
+  vm_id       = 9060
   node_name   = var.node
 
   agent {
@@ -35,14 +36,13 @@ resource "proxmox_virtual_environment_vm" "repo" {
     model        = "virtio"
   }
 
-
   initialization {
     dns {
       servers = ["${var.dns_ip}", "1.1.1.1", "8.8.8.8"]
     }
     ip_config {
       ipv4 {
-        address = "${var.repo_ip}/22"
+        address = "${var.test_ip}/22"
         gateway = var.gateway_ip
       }
     }

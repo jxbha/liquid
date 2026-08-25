@@ -23,12 +23,6 @@ variable "ssh_key" {
   type        = string
 }
 
-variable "target_vm_base_id" {
-  description = "Proxmox Virtual Machine ID"
-  type        = number
-  default     = 120
-}
-
 variable "source_vm_id" {
   description = "Proxmox Virtual Machine ID"
   type        = number
@@ -45,16 +39,37 @@ variable "gateway_ip" {
   type        = string
 }
 
+variable "target_vm_base_id" {
+  description = "Proxmox Virtual Machine ID"
+  type        = number
+  default     = 120
+}
+
 variable "kube_workers" {
   type = map(object({
-    ip = string
+    ip           = string
     vm_id_offset = number
   }))
 }
 
 variable "kube_controllers" {
   type = map(object({
-    ip = string
+    ip           = string
     vm_id_offset = number
   }))
+}
+
+variable "s3_access_key" {
+  description = "Access key for S3 backend"
+  type = string
+}
+
+variable "s3_secret_key" {
+  description = "Secret key for S3 backend"
+  type = string
+}
+
+variable "user" {
+  description = "Username for SSH access"
+  type        = string
 }
