@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bootstrap-registry
+  namespace: cluster-bootstrap
+spec:
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      restartPolicy: Never
+      volumes:
+        - name: upstream-images
+          configMap:
+            name: upstream-images
+      containers:
+        - name: upstream
+          image: quay.io/skopeo/stable:v1.20
+          command:
+            - /bin/sh
+            - -c
+            - |
+              IMAGES="/opt/upstream.txt"
+              TARGET="registry.dev-tools.svc.cluster.local:5000"
+              while read -r record; do
+                  shortname=$(echo "$record" | awk -F/ '{print $NF}')
+                  skopeo copy --dest-tls-verify=false docker://$record docker://$TARGET/$shortname
+              done < "$IMAGES"
+          volumeMounts:
+            - name: upstream-images
+              mountPath: /opt/
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: upstream-images
+  namespace: cluster-bootstrap
+data:
+  upstream.txt: |
+    docker.io/library/postgres:17
+    docker.io/library/golang:1.24-alpine3.22
+    docker.io/library/alpine:3.20
+    docker.io/moby/buildkit:v0.21.1-rootless
+    docker.io/alpine/git:v2.47.2
+    docker.io/library/busybox:1.37.0

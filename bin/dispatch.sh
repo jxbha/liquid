@@ -47,11 +47,14 @@ main(){
                 dev)
                     $BIN/bootstrap/dev.sh "$@"
                     ;;
+                prod)
+                    $BIN/bootstrap/prod.sh "$@"
+                    ;;
                 secrets)
                     $BIN/bootstrap/secrets.sh "$@"
                     ;;
                 *)
-                    echo "Usage: $0 bootstrap { minikube|k3d|dev|secrets }"
+                    echo "Usage: $0 bootstrap { minikube|k3d|dev|prod|secrets }"
                     ;;
             esac
             ;;
