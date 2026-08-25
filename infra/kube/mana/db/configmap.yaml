@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: db-config
-  namespace: app
+  namespace: apps
   labels:
     purpose: data-mana
     database: postgresql

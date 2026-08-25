@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mana
-  namespace: app
+  namespace: apps
 spec:
   type: ClusterIP
   selector:
