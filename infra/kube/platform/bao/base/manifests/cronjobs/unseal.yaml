@@ -5,6 +5,7 @@ metadata:
   namespace: vault
 spec:
   schedule: "*/1 * * * *"
+  concurrencyPolicy: Replace
   jobTemplate:
     spec:
       template:
