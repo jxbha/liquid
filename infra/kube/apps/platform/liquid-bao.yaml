@@ -1,25 +1,26 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: liquid-external-secrets
+  name: liquid-bao
   namespace: argocd
   labels:
-    name: liquid-external-secrets
+    name: liquid-bao
   annotations:
-    argocd.argoproj.io/sync-wave: "3"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
-    repoURL: http://gitea.jbernh.xyz:3000/jxbha/liquid/
-    path: infra/kube/platform/external-secrets/overlays/prod
+    repoURL: http://gitea.jbernh.xyz:3000/root/liquid.git
+    path: infra/kube/platform/bao/overlays/prod
     targetRevision: HEAD
   destination:
     server: https://kubernetes.default.svc
-    namespace: external-secrets
+    namespace: vault
   syncPolicy:
     automated:
-      selfHeal: true
+      prune: true
       enabled: true
+      selfHeal: true
     syncOptions:
       - ServerSideApply=true
       - CreateNamespace=true

@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: http://gitea.jbernh.xyz:3000/jxbha/liquid/
+    repoURL: http://gitea.jbernh.xyz:3000/root/liquid/
     path: infra/kube/platform/argo/overlays/prod
     targetRevision: HEAD
   destination:

@@ -12,3 +12,5 @@ spec:
         role: issuer
         serviceAccountRef:
           name: vault-issuer
+          audiences:
+            - vault
