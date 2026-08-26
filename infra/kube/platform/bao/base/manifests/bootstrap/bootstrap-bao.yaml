@@ -1,0 +1,49 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bootstrap-bao
+  namespace: vault
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      serviceAccountName: bootstrap-bao
+      restartPolicy: OnFailure
+      volumes:
+        - name: terraform
+          configMap:
+            name: bootstrap-bao-tf
+            defaultMode: 0755
+        - name: terraform-policies
+          configMap:
+            name: bootstrap-bao-policies
+            defaultMode: 0755
+        - name: workdir
+          emptyDir: {}
+      initContainers:
+        - name: copy-terraform
+          image: busybox:1.37.0
+          volumeMounts:
+            - name: terraform
+              mountPath: /opt/terraform
+            - name: terraform-policies
+              mountPath: /opt/terraform/policies
+            - name: workdir
+              mountPath: /tmpfile
+          command: ["sh", "-c", "cp -r /opt/terraform/. /tmpfile/"]
+      containers:
+        - name: bootstrap-bao
+          image: hashicorp/terraform:1.14
+          volumeMounts:
+            - name: workdir
+              mountPath: /tmpfile
+          workingDir: /tmpfile
+          command:
+            - /bin/sh
+            - -c
+            - |
+              sleep 600
+              terraform init
+              terraform apply -auto-approve

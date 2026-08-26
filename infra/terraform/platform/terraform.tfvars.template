@@ -1,0 +1,15 @@
+# Proxmox URL
+url = ""
+# Promox Node
+node = ""
+# Username for defined Proxmox Token. can also add TF_VAR_proxmox_api_id
+proxmox_api_id = ""
+# Password for defined Proxmox Token. can also add TF_VAR_proxmox_api_secret
+proxmox_api_secret = ""
+# public ssh key for authenticating. absolute path. can also add TF_VAR_ssh_key
+ssh_key = ""
+
+dns_ip     = ""
+repo_ip     = ""
+proxy_ip    = ""
+gateway_ip = ""

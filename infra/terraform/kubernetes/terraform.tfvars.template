@@ -1,0 +1,35 @@
+# Proxmox URL
+url = ""
+# Promox Node
+node = ""
+# Username for defined Proxmox Token. can also add TF_VAR_proxmox_api_id
+proxmox_api_id = ""
+# Password for defined Proxmox Token. can also add TF_VAR_proxmox_api_secret
+proxmox_api_secret = ""
+# public ssh key for authenticating. absolute path. can also add TF_VAR_ssh_key
+ssh_key = ""
+
+# s3 backend credentials for terraform state storage
+s3_access_key = ""
+s3_secret_key = ""
+
+kube_workers = {
+  "kube-w01" = {
+    ip           = "",
+    vm_id_offset = 1
+  }
+  "kube-w02" = {
+    ip           = "",
+    vm_id_offset = 2
+  }
+}
+
+kube_controllers = {
+  "kube-c01" = {
+    ip           = ""
+    vm_id_offset = 0
+  }
+}
+
+dns_ip     = ""
+gateway_ip = ""

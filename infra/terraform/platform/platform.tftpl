@@ -1,0 +1,17 @@
+[dns]
+dns01 ansible_host=${dns_ip}
+
+[repo]
+repo01 ansible_host=${repo_ip}
+
+[proxy]
+proxy ansible_host=${proxy_ip}
+
+[utility:children]
+dns
+repo
+proxy
+
+[utility:vars]
+ansible_user=${user}
+ansible_ssh_private_key_file=${ssh_key}

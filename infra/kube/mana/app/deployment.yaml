@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mana
-  namespace: app
+  namespace: apps
   labels:
     purpose: mana
 spec:
@@ -16,18 +16,18 @@ spec:
         purpose: mana
     spec:
       volumes:
-      - name: logs-mana
-        persistentVolumeClaim:
-          claimName: logs-mana
-      containers:
-      - name: mana
-        image: registry.dev-tools.svc.cluster.local:5000/mana:latest
-        imagePullPolicy: Always
-        envFrom:
-        - secretRef:
-            name: mana-secret
-        ports:
-        - containerPort: 4040
-        volumeMounts:
         - name: logs-mana
-          mountPath: var/logs/mana
+          persistentVolumeClaim:
+            claimName: logs-mana
+      containers:
+        - name: mana
+          image: registry.dev-tools.svc.cluster.local:5000/mana:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: mana-secret
+          ports:
+            - containerPort: 4040
+          volumeMounts:
+            - name: logs-mana
+              mountPath: var/logs/mana

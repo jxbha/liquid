@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: liquid-dev-tools
+  namespace: argocd
+  labels:
+    name: liquid-dev-tools
+spec:
+  project: default
+  source:
+    repoURL: http://gitea.jbernh.xyz:3000/root/liquid.git
+    path: infra/kube/apps/dev-tools
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

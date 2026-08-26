@@ -1,4 +1,4 @@
-# https://kubectl.docs.kubernetes.io/references/kustomize/kustomization/helmcharts/
+# https://kubectl.docs.kubernetes.io/References/kustomize/kustomization/helmcharts/
 # https://kubectl.docs.kubernetes.io/references/kustomize/builtins/#_helmchartinflationgenerator_
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
@@ -12,3 +12,32 @@ helmGlobals:
   chartHome: helm
 resources:
   - manifests/
+
+configMapGenerator:
+  - name: tailscale
+    namespace: vault
+    files:
+      - secrets/tailscale.enc.yaml
+  - name: brevo
+    namespace: vault
+    files:
+      - secrets/brevo.enc.yaml
+  - name: init-bao
+    namespace: vault
+    files:
+      - terraform/bootstrap-policy.hcl
+  - name: bootstrap-bao-tf
+    namespace: vault
+    files:
+      - terraform/data.tf
+      - terraform/kv.tf
+      - terraform/pki.tf
+      - terraform/provider.tf
+  - name: bootstrap-bao-policies
+    namespace: vault
+    files:
+      - terraform/policies/config-policy.hcl
+      - terraform/policies/eso-policy.hcl
+      - terraform/policies/pki-policy.hcl
+generatorOptions:
+  disableNameSuffixHash: true
